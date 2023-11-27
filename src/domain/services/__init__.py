@@ -1,7 +1,7 @@
 from .cpuservice import CpuService
-from .ramservice import ramservice
+from .ramservice import RamService
 
 __all__ = [
     "CpuService",
-    "ramservice",
+    "RamService",
 ]

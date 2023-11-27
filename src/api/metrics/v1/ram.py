@@ -12,7 +12,7 @@ from domain.services import RamService
 ram_router = APIRouter()
 
 
-@cpu_router.get(
+@ram_router.get(
     "/usageRam",
     response_model=List[GetRamResponseSchema],
     # response_model_exclude={"id"},
