@@ -24,6 +24,7 @@ class MonitorTask:
         """Continuously monitor and store the result in an attribute."""
         while True:
             self.cpu_percent = psutil.cpu_percent(percpu=True)
+            self.ram_percent= psutil
             time.sleep(self.interval)
 
     def __str__(self) -> str:
