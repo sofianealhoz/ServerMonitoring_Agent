@@ -7,7 +7,7 @@ from domain.schemas import (
     ExceptionResponseSchema,
     GetRamResponseSchema,
 )
-from domain.services import ramservice
+from domain.services import RamService
 
 ram_router = APIRouter()
 
