@@ -14,5 +14,7 @@ class ram(BaseModel):
         usage (str): The RAM usage in string format.
     """
 
-    id: int
-    usage: str
+    total: int
+    available: int
+    used: int
+    percent: float

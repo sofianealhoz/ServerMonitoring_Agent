@@ -13,16 +13,9 @@ class GetRamResponseSchema(BaseModel):
         usage (str): The RAM usage in string format.
     """
 
-    id: int
-    usage: str
+    total: int
+    available: int
+    used: int
+    percent: float
 
 
-class GetRamCoreResponseSchema(BaseModel):
-    """
-    Pydantic data model for the response schema representing RAM core number.
-
-    Attributes:
-        number (int): RAM core number.
-    """
-
-    number: int

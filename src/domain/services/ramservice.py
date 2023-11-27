@@ -25,9 +25,9 @@ class RamService:
         Returns:
             List[ram]: A list of Ram objects containing RAM values.
         """
-        cpulist = []
-        for core, usage in enumerate(monitor_task.ram_percent):
-            ramlist.append(Cpu(id=core, usage=usage))
+        ramlist = []
+        for total, available, used,percent in enumerate(monitor_task.ram_percent):
+            ramlist.append(ram(total = total, available=available, used= used, percent= percent))
         return ramlist
 
     def __str__(self):
