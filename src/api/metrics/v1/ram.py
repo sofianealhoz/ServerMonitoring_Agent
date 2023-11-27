@@ -6,7 +6,6 @@ from fastapi import APIRouter, Request
 from domain.schemas import (
     ExceptionResponseSchema,
     GetRamResponseSchema,
-    GetRamCoreResponseSchema,
 )
 from domain.services import ramservice
 
