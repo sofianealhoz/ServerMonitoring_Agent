@@ -10,4 +10,5 @@ __all__ = [
     "GetCpuResponseSchema",
     "GetCpuCoreResponseSchema",
     "ExceptionResponseSchema",
+    "GetRamResponseSchema",
 ]
