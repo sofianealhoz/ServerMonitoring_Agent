@@ -90,7 +90,7 @@ def create_app() -> FastAPI:
         version=config.version,
         docs_url="/docs",
         redoc_url="/redoc",
-        usage_url="/usage",
+        #usage_url="/usage",
         middleware=make_middleware(),
     )
     fastapi.state.monitortask = monitortask

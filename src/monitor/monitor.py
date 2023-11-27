@@ -6,6 +6,7 @@ import psutil
 class MonitorTask:
     """A class for monitoring metrics."""
 
+    
     interval: int
     cpu_percent: list[float]
     num_cores: int

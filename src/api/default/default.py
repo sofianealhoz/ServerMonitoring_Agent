@@ -15,8 +15,8 @@ async def health() -> Response:
 
     Returns:
         Response: A response with a 200 status code.
-    """
-    return Response(status_code=200)
+#    """
+#    return Response(status_code=200)'''
 
 
 @default_router.get("/")

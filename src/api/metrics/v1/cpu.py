@@ -12,7 +12,6 @@ from domain.services import CpuService
 
 cpu_router = APIRouter()
 
-
 @cpu_router.get(
     "/usage",
     response_model=List[GetCpuResponseSchema],
