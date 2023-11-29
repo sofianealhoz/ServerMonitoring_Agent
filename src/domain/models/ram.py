@@ -15,6 +15,6 @@ class ram(BaseModel):
     """
 
     total: int
-    #available: int
-    #used: int
+    available: int
+    used: int
     percent: float

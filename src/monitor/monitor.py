@@ -10,6 +10,8 @@ class MonitorTask:
     cpu_percent: list[float]
     ram_percent: list[int]
     num_cores: int
+    ram_used : list[int] 
+    ram_available : list[int] 
     ram_total : int
 
     def __init__(self) -> None:
@@ -22,6 +24,8 @@ class MonitorTask:
         self.interval = 3
         self.num_cores = psutil.cpu_count(logical=False)
         self.ram_percent =[]
+        self.ram_used= []
+        self.ram_available =[]
         self.ram_total = psutil.virtual_memory().total
 
     def monitor(self):
@@ -29,6 +33,8 @@ class MonitorTask:
         while True:
             self.cpu_percent = psutil.cpu_percent(percpu=True)
             self.ram_percent= self.ram_percent + [psutil.virtual_memory().percent]
+            self.ram_used = self.ram_used + [psutil.virtual_memory().used]
+            self.ram_available = self.ram_available + [psutil.virtual_memory().available]
             time.sleep(self.interval)
 
     def __str__(self) -> str:
