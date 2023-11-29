@@ -1,5 +1,12 @@
 """This module defines an exemple of test"""
 import threading
+
+
+import os
+import sys
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 from fastapi.testclient import TestClient
 from server import app
 from monitor import MonitorTask
