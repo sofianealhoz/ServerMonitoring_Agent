@@ -13,6 +13,7 @@ from fastapi.responses import JSONResponse
 from api import router
 from api.default.default import default_router
 from api.metrics.v1.cpu import cpu_router
+from api.metrics.v1.harddrive import hdd_router
 from core.exceptions import CustomException
 from core.config import get_config
 from monitor import MonitorTask
@@ -30,6 +31,7 @@ def init_routers(fastapi: FastAPI) -> None:
     # Add domain routes
     fastapi.include_router(router)
     fastapi.include_router(cpu_router)
+    fastapi.include_router(hdd_router)
 
 
 def init_listeners(fastapi: FastAPI) -> None:
