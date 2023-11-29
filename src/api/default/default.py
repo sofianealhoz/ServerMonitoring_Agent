@@ -1,3 +1,5 @@
+import psutil;
+
 """
 This module defines API default routes for a router.
 
@@ -27,7 +29,8 @@ async def home() -> Response:
     Returns:
         Response: A response with a "Hello World" message and a 200 status code.
     """
-    return Response(content='{"message": "Hello World"}', status_code=200)
+    
+    return Response(content='{"message"="Hello World ! "}', status_code= 200)
 
 
 @default_router.get("/version")
