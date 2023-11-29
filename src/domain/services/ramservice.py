@@ -26,7 +26,7 @@ class RamService:
             List[ram]: A list of Ram objects containing RAM values.
         """
         ramlist = []
-        for percent in enumerate(monitor_task.ram_percent):
+        for percent in monitor_task.ram_percent:
             ramlist.append(ram(percent= percent))
         return ramlist
         
