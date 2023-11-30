@@ -10,7 +10,7 @@ from domain.services import HardDriveService
 hdd_router = APIRouter()
 
 @hdd_router.get(
-    "/usage_hdd",
+    "/usageHdd",
     response_model=GetHddUsageResponseSchema,
     # response_model_exclude={"id"},
     responses={"400": {"model": ExceptionResponseSchema}},
