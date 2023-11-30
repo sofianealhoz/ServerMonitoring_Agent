@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from .cpu import GetCpuResponseSchema, GetCpuCoreResponseSchema
-from .hdd import GetHddResponseSchema#, GetHddPartResponseSchema
+from .hdd import GetHddUsageResponseSchema
 
 
 class ExceptionResponseSchema(BaseModel):
@@ -10,7 +10,7 @@ class ExceptionResponseSchema(BaseModel):
 __all__ = [
     "GetCpuResponseSchema",
     "GetCpuCoreResponseSchema",
-    "GetHddResponseSchema",
+    "GetHddUsageResponseSchema",
     #"GetHddPartResponseSchema",
     "ExceptionResponseSchema",
 ]

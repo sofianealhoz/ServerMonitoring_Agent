@@ -1,8 +1,7 @@
 """This module defines a `MonitorTask` class for monitoring metrics on a host."""
 import time
-import psutil._common
-import psutil 
-
+#import psutil 
+import psutil
 
 
 class MonitorTask:
@@ -12,8 +11,7 @@ class MonitorTask:
     interval: int
     cpu_percent: list[float]
     num_cores: int
-    harddrive_part: list[psutil._common.sdiskpart]
-    
+    harddrive_usage: psutil.disk_usage('/')
     def __init__(self) -> None:
         """
         Initialize the MonitorTask class.
@@ -23,15 +21,18 @@ class MonitorTask:
         """
         self.interval = 3
         self.num_cores = psutil.cpu_count(logical=False)
-        
 
     def monitor(self):
         """Continuously monitor and store the result in an attribute."""
         while True:
             self.cpu_percent = psutil.cpu_percent(percpu=True)
-            self.harddrive_part = (psutil.disk_partitions(all=False))
-            #self.harddrive_usage.append(psutil.disk_usage('/'))
+            
+            #On récupère les informations sur le disque dur (total, used, free, percent) :
+            self.harddrive_usage = psutil.disk_usage('/') 
             time.sleep(self.interval)
+
+
+        
 
     def __str__(self) -> str:
         return f"MonitorTask(interval = {self.interval})"

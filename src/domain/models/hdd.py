@@ -6,30 +6,14 @@ from pydantic import BaseModel
 
 # HDU data model
 class Hdd(BaseModel):
+    """Attributes:
+        total (float): The total size of the HDD.
+        used (float): The used size of the HDD.
+        free (float): The free size of the HDD.
+        percent (float): The percentage of the HDD used.
     """
-    Pydantic data model for representing CPU information.
-
-    Attributes:
-        id (int): The ID of the CPU data.
-        usage (str): The CPU usage in string format.
-    """
-
-    device: str
-    mountpoint: str
-    fstype: str
-    opts: str
-    maxfile: int
-    maxpath: int
-
-class HddStorage(BaseModel):
-    """Pydantic data model for representing HDD usag
-    Attributes:
-    total (int): The total size of the HDD.
-    used (int): The used size of the HDD.
-    free (int): The free size of the HDD.
-    percent (float): The percentage of the HDD used.
-    """
-    total: int
-    used: int
-    free: int
+    #Tout est en float pour pouvoir obtenir les valeurs en Go.
+    total: float
+    used: float 
+    free: float
     percent: float

@@ -1,28 +1,20 @@
 from pydantic import BaseModel
 
-class GetHddResponseSchema(BaseModel):
-    """
-    Pydantic data model for the response schema representing HDD information.
+class GetHddUsageResponseSchema(BaseModel):
+    
+    """Pydantic data model for the response schema representing HDD information.
 
     Attributes:
-        id (int): The ID of the HDD data.
-        usage (str): The HDD usage in string format.
+        total (float): The total size of the HDD.
+        used (float): The used size of the HDD.
+        free (float): The free size of the HDD.
+        percent (float): The percentage of the HDD used.
     """
+    #Tout est en float pour pouvoir obtenir les valeurs en Go.
 
-    device: str
-    mountpath: str
-    fstype: str
-    opts: str
-    maxfile: int
-    maxpath: int
+    total: float
+    used: float
+    free: float
+    percent: float
 
-"""class GetHddPartResponseSchema(BaseModel):
-    
-    Pydantic data model for the response schema representing HDD information.
-
-    Attributes:
-        id (int): The ID of the HDD data.
-        usage (str): The HDD usage in string format.
-    
-    name: str"""
     
