@@ -15,6 +15,7 @@ class MonitorTask:
     ram_used : list[float] 
     ram_available : list[float] 
     ram_total : float
+    network_statut : psutil.net_io_counters()
 
     def __init__(self) -> None:
         """
@@ -29,6 +30,7 @@ class MonitorTask:
         self.ram_used= []
         self.ram_available =[]
         self.ram_total = psutil.virtual_memory().total/2**30
+        self.network_statut = psutil.net_io_counters(pernic=True)
 
     def monitor(self):
         """Continuously monitor and store the result in an attribute."""
@@ -39,6 +41,7 @@ class MonitorTask:
             self.ram_percent= self.ram_percent + [psutil.virtual_memory().percent]
             self.ram_used = self.ram_used + [psutil.virtual_memory().used/2**30]
             self.ram_available = self.ram_available + [psutil.virtual_memory().available/2**30]
+            self.network_statut : psutil.net_io_counters(pernic = True)
             time.sleep(self.interval)
 
     def __str__(self) -> str:

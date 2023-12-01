@@ -2,6 +2,7 @@ from pydantic import BaseModel
 from .cpu import GetCpuResponseSchema, GetCpuCoreResponseSchema
 from .hdd import GetHddUsageResponseSchema
 from .ram import GetRamResponseSchema
+from .network import GetNetworkResponseSchema
 
 
 
@@ -14,5 +15,6 @@ __all__ = [
     "GetCpuCoreResponseSchema",
     "GetHddUsageResponseSchema",
     "GetRamResponseSchema",
+    "GetNetworkResponseSchema",
     "ExceptionResponseSchema",
 ]
