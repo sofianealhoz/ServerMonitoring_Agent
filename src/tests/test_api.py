@@ -54,3 +54,29 @@ def test_get_cpu_core():
     # we can test types but not values because they will change at each test.
     assert response.status_code == 200
     assert isinstance(response.json()["number"], int)
+
+
+def test_get_ram_usage():
+    # backup of the existing monitortask to restore it after the test
+    save_app = app.state.monitortask
+    # use fake monitor to have deterministic values
+    app.state.monitortask = MonitorTaskFake()
+    response = client.get("/usageRam")
+    
+    # Check status code
+    assert response.status_code == 200
+    
+    # Check response format
+    assert isinstance(response.json(), list), f"Expected a list in response: {response.json()}"
+    
+    # Check each object in the list
+    for ram_info in response.json():
+        assert isinstance(ram_info, dict), f"Expected each item in the list to be a dictionary: {response.json()}"
+        assert all(key in ram_info for key in ["total", "available", "used", "percent"]), f"Expected keys 'total', 'available', 'used', 'percent' in each item: {ram_info}"
+        
+        # Check the type of values in each object
+        for key, value in ram_info.items():
+            assert isinstance(value, (int, float)), f"Expected '{key}' to be an int or float: {ram_info}"
+    
+    # restore monitortask for the next test
+    app.state.monitortask = save_app
