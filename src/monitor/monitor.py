@@ -28,7 +28,7 @@ class MonitorTask:
         self.ram_percent =[]
         self.ram_used= []
         self.ram_available =[]
-        self.ram_total = psutil.virtual_memory().total/2**3
+        self.ram_total = psutil.virtual_memory().total/2**30
 
     def monitor(self):
         """Continuously monitor and store the result in an attribute."""
@@ -37,8 +37,8 @@ class MonitorTask:
             #On récupère les informations sur le disque dur (total, used, free, percent) :
             self.harddrive_usage = psutil.disk_usage('/') 
             self.ram_percent= self.ram_percent + [psutil.virtual_memory().percent]
-            self.ram_used = self.ram_used + [psutil.virtual_memory().used/2**3]
-            self.ram_available = self.ram_available + [psutil.virtual_memory().available/2**3]
+            self.ram_used = self.ram_used + [psutil.virtual_memory().used/2**30]
+            self.ram_available = self.ram_available + [psutil.virtual_memory().available/2**30]
             time.sleep(self.interval)
 
     def __str__(self) -> str:
