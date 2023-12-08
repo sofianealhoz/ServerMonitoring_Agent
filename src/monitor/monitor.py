@@ -13,7 +13,6 @@ class MonitorTask:
     ram_percent: list[int]
     num_cores: int
     harddrive_usage: psutil.disk_usage('/')
-<<<<<<< src/monitor/monitor.py
     ram_used : list[float] 
     ram_available : list[float] 
     ram_total : float
@@ -44,7 +43,7 @@ class MonitorTask:
         self.unique_users = []
         self.nb_error404 = []
         #self.log_directory = '/var/log/apache2/other_vhosts_access.log' Pour les serveurs
-        self.log_directory = "/home/tse/Documents/interfaceAdm/agent/src/monitor/Documents" # Pour l'instant
+        self.log_directory = "src/monitor/Documents" # Pour l'instant
         self.network_statut = psutil.net_io_counters(pernic=True)
 
 
