@@ -6,7 +6,7 @@ class GetNetworkResponseSchema(BaseModel):
     Pydantic data model for the response schema representing network information.
 
     Attributes:
-        bytes_sent (int): The number of bytes sent. 
+        bytes_sent (int): The number of bytes sent.
         bytes_recv (int): The number of bytes received.
         packets_sent (int): The number of packets sent.
         packets_recv (int): The number of packets received.

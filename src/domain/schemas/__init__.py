@@ -5,7 +5,6 @@ from .ram import GetRamResponseSchema
 from .network import GetNetworkResponseSchema
 
 
-
 class ExceptionResponseSchema(BaseModel):
     error: str
 

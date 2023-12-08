@@ -9,10 +9,10 @@ from domain.services import NetworkService
 
 network_router = APIRouter()
 
+
 @network_router.get(
     "/usageNetwork",
     response_model=List[GetNetworkResponseSchema],
-    # response_model_exclude={"id"},
     responses={"400": {"model": ExceptionResponseSchema}},
 )
 async def get_network(request: Request) -> List[GetNetworkResponseSchema]:
@@ -25,5 +25,4 @@ async def get_network(request: Request) -> List[GetNetworkResponseSchema]:
     Returns:
         List[GetCpuResponseSchema]: A list of CPU data as per the response model.
     """
-    #return Response(content='{"message": "Hello World"}', status_code=200)
     return await NetworkService().get_network_statut(request.app.state.monitortask)

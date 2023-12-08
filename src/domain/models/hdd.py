@@ -12,8 +12,8 @@ class Hdd(BaseModel):
         free (float): The free size of the HDD.
         percent (float): The percentage of the HDD used.
     """
-    #Tout est en float pour pouvoir obtenir les valeurs en Go.
+# Tout est en float pour pouvoir obtenir les valeurs en Go.
     total: float
-    used: float 
+    used: float
     free: float
     percent: float
