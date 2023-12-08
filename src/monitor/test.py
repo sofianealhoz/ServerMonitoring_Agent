@@ -49,7 +49,7 @@ def parser(log_file_path):
         for line in lines :
             
             parser =make_parser('%h %l %u %t "%r" %>s %b "%{Referer}i" "%{User-Agent}i"')
-            parser1 = make_parser('%h %l %u %t "%r" %>s %b ')
+            parser1 = make_parser('%h %l %u %t "%r" %>s %b  ')
             line_parser = parser1(line)
             pprint(line_parser)
     except Exception as e:
