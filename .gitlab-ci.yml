@@ -16,6 +16,7 @@ stages: # List of stages for jobs, and their order of execution
   - test
   - deploy
 
+test_results_path: artifacts/test_results
 
 #build-job:
 #  stage: build
@@ -39,4 +40,6 @@ deploy-job:      # This job runs in the deploy stage.
   environment: production
   script:
     - echo "Succès des tests."
-
+  artifacts: 
+    paths:
+      - $test_results_path
