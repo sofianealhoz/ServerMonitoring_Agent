@@ -12,6 +12,7 @@ from domain.services import CpuService
 
 cpu_router = APIRouter()
 
+
 @cpu_router.get(
     "/usage",
     response_model=List[GetCpuResponseSchema],
@@ -26,7 +27,8 @@ async def get_cpu(request: Request) -> List[GetCpuResponseSchema]:
         request (Request): The incoming request.
 
     Returns:
-        List[GetCpuResponseSchema]: A list of CPU data as per the response model.
+        List[GetCpuResponseSchema]: A list of CPU data as per
+        the response model.
     """
     return await CpuService().get_cpu(request.app.state.monitortask)
 

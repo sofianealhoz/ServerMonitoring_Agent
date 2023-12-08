@@ -21,7 +21,6 @@ from core.config import get_config
 from monitor import MonitorTask
 
 
-
 def init_routers(fastapi: FastAPI) -> None:
     """
     Initialize API routers and include them in the FastAPI fastapi.

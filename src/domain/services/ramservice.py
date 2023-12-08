@@ -31,9 +31,8 @@ class RamService:
             available = monitor_task.ram_available[i]
             used = monitor_task.ram_used[i]
             percent = monitor_task.ram_percent[i]
-            ramlist.append(ram(total= total ,available= available, used=used ,percent= percent))
+            ramlist.append(ram(total=total, available=available, used=used, percent=percent))
         return ramlist
-        
 
     def __str__(self):
         return self.__class__.__name__

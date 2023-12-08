@@ -13,9 +13,7 @@ class GetRamResponseSchema(BaseModel):
         usage (str): The RAM usage in string format.
     """
 
-    total: float # en Go
+    total: float  # en Go
     available: float
     used: float
-    percent: float # en % 
-
-
+    percent: float  # en %
