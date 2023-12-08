@@ -21,4 +21,4 @@ deploy-job:      # This job runs in the deploy stage.
   environment: production
   script:
     - echo "Lancement du programme."
-    - make run
+    - python3 src/main.py
