@@ -1,7 +1,7 @@
 from apache_log_parser import make_parser
 
 # Chemin vers le fichier journal Apache
-log_file_path = '/var/log/syslog.log'
+log_file_path = '/var/log/access.log'
 
 # Format du fichier journal Apache
 log_format = '%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"'
