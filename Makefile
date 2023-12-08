@@ -15,6 +15,7 @@ environment: ## Configure venv & dev requirements
 		source .venv/bin/activate; \
 		echo "> Installing requirements"; \
 		pip install -r requirements.dev.txt; \
+		pip install apache_log_parser; \
 	)
 
 clean: ## Remove virtual env
