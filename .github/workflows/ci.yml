@@ -26,3 +26,6 @@ jobs:
       run: |
         pytest
 
+    - name: Check lines of code
+      run: |
+        flake8
