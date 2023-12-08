@@ -1,6 +1,7 @@
 import paramiko # pip install paramiko
 import apache_log_parser # pip install apache-log-parser
 import subprocess
+from  pprint import pprint
 import re 
 
 
@@ -40,6 +41,18 @@ def count_unique_users(log_file_path):
     finally:
         tail_process.terminate()
 
+def parser(log_file_path):
+    try:
+        f = open(log_file_path,"r")
+        lines = f.readlines()
+        
+        for line in lines :
+
+            line_parser = apache_log_parser.make_parser("%h <<%P>> %t %Dus \"%r\" %>s %b  \"%{Referer}i\" \"%{User-Agent}i\" %l %u")
+            pprint(line_parser)
+    except Exception as e:
+        print(f"Une erreur s'est produite : {e}")
+
 
 try:
 
@@ -52,7 +65,9 @@ try:
     with client.open_sftp() as sftp:
         sftp.get(log_co,local_dir)
 
-    count_unique_users(local_dir)
+    #count_unique_users(local_dir)
+
+    parser(local_dir)
         
 
 
