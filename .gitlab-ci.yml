@@ -10,6 +10,7 @@ before_script:
   - echo "> Installing requirements"
   - pip install -r requirements.dev.txt
   - pip install pytest flake8 psutil
+  - pip install pytest flake8 psutil autopep8
 
 stages: # List of stages for jobs, and their order of execution
   #- build
@@ -32,6 +33,13 @@ lint-test-job:   # This job also runs in the test stage.
     - echo "Linting code..."
     - flake8 ./src
     - echo "No lint issues found."
+
+autopep8-job:  # This job runs autopep8
+  stage: test
+  script:
+    - echo "Autopep8 - Apply formatting..."
+    - autopep8 --recursive --in-place --aggressive --max-line-length=88 ./src
+    - echo "Autopep8 formatting done."
 
 deploy-job:      # This job runs in the deploy stage.
   stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
