@@ -1,0 +1,58 @@
+from apache_log_parser import make_parser
+
+# Chemin vers le fichier journal Apache
+log_file_path = '/var/log/syslog.log'
+
+# Format du fichier journal Apache
+log_format = '%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"'
+
+# Création du parseur de log
+parser = make_parser(log_format)
+
+# Fonction pour récupérer le nombre d'adresses IP différentes
+def count_unique_ips(file_path):
+    unique_ips = set()
+    with open(file_path, 'r') as file:
+        for line in file:
+            log_data = parser(line)
+            ip_address = log_data['remote_host']
+            unique_ips.add(ip_address)
+    return len(unique_ips)
+
+# Fonction pour compter les visites de chaque page individuelle
+def count_page_visits(file_path):
+    page_visits = {}
+    with open(file_path, 'r') as file:
+        for line in file:
+            log_data = parser(line)
+            page = log_data['request_url']
+            if page in page_visits:
+                page_visits[page] += 1
+            else:
+                page_visits[page] = 1
+    return page_visits
+
+# Fonction pour compter les erreurs 404
+def count_404_errors(file_path):
+    count_404 = 0
+    with open(file_path, 'r') as file:
+        for line in file:
+            log_data = parser(line)
+            status_code = log_data['status']
+            if status_code == '404':
+                count_404 += 1
+    return count_404
+
+# Appel des fonctions pour obtenir les données
+num_unique_ips = count_unique_ips(log_file_path)
+page_visits = count_page_visits(log_file_path)
+num_404_errors = count_404_errors(log_file_path)
+
+# Affichage des résultats
+print("Nombre d'adresses IP différentes:", num_unique_ips)
+
+print("\nComptage des visites de chaque page:")
+for page, count in page_visits.items():
+    print(f"Page: {page}, Nombre de visites: {count}")
+
+print("\nNombre d'erreurs 404:", num_404_errors)
