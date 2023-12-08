@@ -4,9 +4,12 @@ before_script:
   - python --version ; pip --version  # For debugging
   - pip install virtualenv
   - virtualenv venv
-  - source venv/bin/activate
-  - pip install flake8
-  - pip install pytest
+  - source venv/bin/activate 
+  - python3 -m venv .venv
+  - source .venv/bin/activate
+  - echo "> Installing requirements"
+  - pip install -r requirements.dev.txt
+  - pip install pytest flake8
 
 stages: # List of stages for jobs, and their order of execution
   #- build
