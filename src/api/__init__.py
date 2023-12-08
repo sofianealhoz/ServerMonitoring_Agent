@@ -8,6 +8,6 @@ router = APIRouter()
 router.include_router(cpu_v1_router, prefix="/metrics/v1/cpu")
 router.include_router(hdd_v1_router, prefix="/metrics/v1/harddrive")
 router.include_router(cpu_v1_router, prefix="/metrics/v1/ram")
-
+router.include_router(cpu_v1_router, prefix="/metrics/v1/log")
 
 __all__ = ["router"]

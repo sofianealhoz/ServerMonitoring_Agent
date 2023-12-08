@@ -4,6 +4,7 @@ import psutil
 
 
 
+
 class MonitorTask:
     """A class for monitoring metrics."""
 
@@ -20,6 +21,7 @@ class MonitorTask:
     # Pour les Log
     unique_users : int 
     nb_error404 : int 
+    log_directory : str
 
     def __init__(self) -> None:
         """
@@ -36,6 +38,8 @@ class MonitorTask:
         self.ram_total = psutil.virtual_memory().total/2**30
         self.unique_users = []
         self.nb_error404 = []
+        #self.log_directory = '/var/log/apache2/other_vhosts_access.log' Pour les serveurs
+        self.log_directory = "Documents" # Pour l'instant
 
     def monitor(self):
         """Continuously monitor and store the result in an attribute."""
@@ -47,6 +51,8 @@ class MonitorTask:
             self.ram_used = self.ram_used + [psutil.virtual_memory().used/2**30]
             self.ram_available = self.ram_available + [psutil.virtual_memory().available/2**30]
             # On récupère les informations des logs (nb ip connectés, nb d'erreurs 404 ) : 
+            self.unique_users = self.unique_users + [count_unique_users(self.log_directory)]
+            self.nb_error404 = self.nb_error404 + [error404(self.log_directory)]
             time.sleep(self.interval)
             
 

@@ -5,6 +5,7 @@ from .ram import ram
 __all__ = [
     "Cpu",
     "Hdd",
-    "ram"
+    "ram",
+    "log"
 ]
 

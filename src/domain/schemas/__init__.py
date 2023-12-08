@@ -15,4 +15,5 @@ __all__ = [
     "GetHddUsageResponseSchema",
     "GetRamResponseSchema",
     "ExceptionResponseSchema",
+    "GetLogResponseSchema",
 ]
