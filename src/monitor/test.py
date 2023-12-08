@@ -5,7 +5,7 @@ from  pprint import pprint
 import re 
 
 
-username = 'grudu'
+"""username = 'grudu'
 hostname1 = "karadoc.telecomste.net"
 port1 = 22103
 password1 = '103-TgBT-8451'
@@ -13,7 +13,7 @@ hostname2 = "mevanwi.telecomste.net"
 port2 = 22104
 password2 = '104-TgBT-0070'
 log_dir = '/var/log/apache2'
-log_co = '/var/log/apache2/other_vhosts_access.log'
+log_co = '/var/log/apache2/other_vhosts_access.log'"""
 local_dir = "Documents"
 
 def count_unique_users(log_file_path):
@@ -41,24 +41,29 @@ def count_unique_users(log_file_path):
     finally:
         tail_process.terminate()
 
-def parser(log_file_path):
+def error404(log_file_path):
     try:
+        count404 = 0
         f = open(log_file_path,"r")
         lines = f.readlines()
         
         for line in lines :
             
             parser =make_parser('%h %l %u %t "%r" %>s %b "%{Referer}i" "%{User-Agent}i"')
-            parser1 = make_parser('%h %l %u %t "%r" %>s %b  ')
+            parser1 = make_parser('%h %l %u %t "%r" %>s %b')
             line_parser = parser1(line)
-            pprint(line_parser)
+            
+            if (line_parser['status']=='404'):
+                count404 +=1
     except Exception as e:
         print(f"Une erreur s'est produite : {e}")
+    finally :             
+        return count404
 
 
 try:    
     #count_unique_users(local_dir)
-    parser(local_dir)
+    print(error404(local_dir))
         
 
 
