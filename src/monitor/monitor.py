@@ -1,7 +1,7 @@
 """This module defines a `MonitorTask` class for monitoring metrics on a host."""
 import time
 import psutil
-
+from LogFunction import count_unique_users, error404
 
 
 
@@ -17,11 +17,13 @@ class MonitorTask:
     ram_used : list[float] 
     ram_available : list[float] 
     ram_total : float
+    
 
     # Pour les Log
     unique_users : int 
     nb_error404 : int 
     log_directory : str
+    logger : LogFunction
 
     def __init__(self) -> None:
         """

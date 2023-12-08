@@ -11,14 +11,13 @@ import re
 log_co = '/var/log/apache2/other_vhosts_access.log' // sur nos serveurs
 local_dir = "Documents"  // Pour les tests
 """
+class LogFunction : 
+    unique_users : int 
+    nb_error404 : int 
 
-class MonitorLog: 
-    
-
-
-    def __init__(self) -> None:
-        ...
-        
+    def __init__(self): 
+        self.unique_users = 0
+        self.nb_error404 = 0
 
     def count_unique_users(log_file_path):
     unique_users = 0
@@ -53,7 +52,7 @@ class MonitorLog:
         
             for line in lines :
             
-                parser =make_parser('%h %l %u %t "%r" %>s %b "%{Referer}i" "%{User-Agent}i"')
+                
                 parser1 = make_parser('%h %l %u %t "%r" %>s %b')
                 line_parser = parser1(line)
                 
