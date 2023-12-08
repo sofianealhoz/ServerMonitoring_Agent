@@ -27,7 +27,7 @@ class LogService:
             List[ram]: A list of Ram objects containing RAM values.
         """
         
-        logList
+        logList = []
         for i in range(len(monitor_task.unique_users)):
             unique_users = monitor_task.unique_users[i]
             nb_error404 = monitor_task.nb_error404[i]

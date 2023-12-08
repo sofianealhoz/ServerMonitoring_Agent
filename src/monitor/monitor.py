@@ -1,7 +1,7 @@
 """This module defines a `MonitorTask` class for monitoring metrics on a host."""
 import time
 import psutil
-from LogFunction import count_unique_users, error404
+from .LogFunction import count_unique_users, error404
 
 
 
@@ -23,7 +23,7 @@ class MonitorTask:
     unique_users : int 
     nb_error404 : int 
     log_directory : str
-    logger : LogFunction
+    
 
     def __init__(self) -> None:
         """
@@ -41,7 +41,7 @@ class MonitorTask:
         self.unique_users = []
         self.nb_error404 = []
         #self.log_directory = '/var/log/apache2/other_vhosts_access.log' Pour les serveurs
-        self.log_directory = "Documents" # Pour l'instant
+        self.log_directory = "/home/tse/Documents/interfaceAdm/agent/src/monitor/Documents" # Pour l'instant
 
     def monitor(self):
         """Continuously monitor and store the result in an attribute."""
