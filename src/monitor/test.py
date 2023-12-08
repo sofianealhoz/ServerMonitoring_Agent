@@ -1,5 +1,5 @@
 import paramiko # pip install paramiko
-import apache_log_parser # pip install apache-log-parser
+from apache_log_parser import make_parser # pip install apache-log-parser
 import subprocess
 from  pprint import pprint
 import re 
@@ -47,26 +47,17 @@ def parser(log_file_path):
         lines = f.readlines()
         
         for line in lines :
-
-            line_parser = apache_log_parser.make_parser("%h <<%P>> %t %Dus \"%r\" %>s %b  \"%{Referer}i\" \"%{User-Agent}i\" %l %u")
+            
+            parser =make_parser('%h %l %u %t "%r" %>s %b "%{Referer}i" "%{User-Agent}i"')
+            parser1 = make_parser('%h %l %u %t "%r" %>s %b ')
+            line_parser = parser1(line)
             pprint(line_parser)
     except Exception as e:
         print(f"Une erreur s'est produite : {e}")
 
 
-try:
-
-    client = paramiko.SSHClient()
-    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            
-  # Connexion avec mot de passe
-    client.connect(hostname1, port1, username, password1)
-
-    with client.open_sftp() as sftp:
-        sftp.get(log_co,local_dir)
-
+try:    
     #count_unique_users(local_dir)
-
     parser(local_dir)
         
 
@@ -74,6 +65,3 @@ try:
 except Exception as e:
     print(f"Une erreur s'est produite : {e}")
 
-finally:
-    # Fermer la connexion SSH
-    client.close()
