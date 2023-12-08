@@ -1,15 +1,15 @@
+image: python:latest
+
 stages: # List of stages for jobs, and their order of execution
   - build
   - test
   - deploy
 
 
-build-job:
-  stage: build
-  script:
-    - sudo apt install python3
-    - python3 pip install --upgrade pip
-    - pip install pytest
+#build-job:
+#  stage: build
+#  script:
+#    - pip install pytest
     
 unit-test-job:   # This job runs in the test stage.
   stage: test    # It only starts when the job in the build stage completes successfully.
