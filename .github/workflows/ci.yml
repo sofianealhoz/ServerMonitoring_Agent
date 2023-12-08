@@ -3,7 +3,7 @@ name: Continuous Integration
 on:
   push:
     branches:
-      - TestUnitaire
+      - main
 jobs:
   build:
     runs-on: ubuntu-latest
