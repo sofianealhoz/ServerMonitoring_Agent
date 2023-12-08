@@ -38,6 +38,5 @@ deploy-job:      # This job runs in the deploy stage.
   stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
   environment: production
   script:
-    - echo "Lancement du programme."
-    - make run
+    - echo "Succès des tests."
 
