@@ -1,15 +1,12 @@
 """This module defines an exemple of test"""
 import threading
-
-
 import os
 import sys
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-
 from fastapi.testclient import TestClient
 from server import app
 from monitor import MonitorTask
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 
 class MonitorTaskFake(MonitorTask):
@@ -25,6 +22,7 @@ class MonitorTaskFake(MonitorTask):
 
     def monitor(self):
         pass
+
 
 # Launching the real monitor for test involving the real monitor
 client = TestClient(app)
@@ -62,13 +60,13 @@ def test_get_ram_usage():
     # use fake monitor to have deterministic values
     app.state.monitortask = MonitorTaskFake()
     response = client.get("/usageRam")
-    
+
     # Check status code
     assert response.status_code == 200
-    
+
     # Check response format
     assert isinstance(response.json(), list), f"Expected a list in response: {response.json()}"
-    
+
     # Check each object in the list
     for ram_info in response.json():
         assert isinstance(ram_info, dict), f"Expected each item in the list to be a dictionary: {response.json()}"
@@ -80,6 +78,7 @@ def test_get_ram_usage():
     
     # restore monitortask for the next test
     app.state.monitortask = save_app
+
 
 def test_get_network_usage():
     # backup of the existing monitortask to restore it after the test
