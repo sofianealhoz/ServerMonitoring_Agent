@@ -6,16 +6,16 @@ stages: # List of stages for jobs, and their order of execution
   - deploy
 
 
-#build-job:
-#  stage: build
-#  script:
-#    - pip install pytest
+build-job:
+  stage: build
+  script:
+    - pip install flake8
     
 unit-test-job:   # This job runs in the test stage.
   stage: test    # It only starts when the job in the build stage completes successfully.
   script:
     - echo "Running unit tests...."
-    - make test
+    - pytest
     - echo "Tests done."
 
 lint-test-job:   # This job also runs in the test stage.
