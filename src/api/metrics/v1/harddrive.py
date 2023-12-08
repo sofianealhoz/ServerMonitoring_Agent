@@ -1,4 +1,3 @@
-from typing import List
 from fastapi import APIRouter, Request
 from domain.schemas import (
     ExceptionResponseSchema,
@@ -8,6 +7,7 @@ from domain.schemas import (
 from domain.services import HardDriveService
 
 hdd_router = APIRouter()
+
 
 @hdd_router.get(
     "/usageHdd",
@@ -25,5 +25,4 @@ async def get_hdd(request: Request) -> GetHddUsageResponseSchema:
     Returns:
         List[GetCpuResponseSchema]: A list of CPU data as per the response model.
     """
-    #return Response(content='{"message": "Hello World"}', status_code=200)
-    return await HardDriveService().get_harddrive_usage(request.app.state.monitortask)  
+    return await HardDriveService().get_harddrive_usage(request.app.state.monitortask)

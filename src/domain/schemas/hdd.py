@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
+
 class GetHddUsageResponseSchema(BaseModel):
-    
     """Pydantic data model for the response schema representing HDD information.
 
     Attributes:
@@ -10,11 +10,8 @@ class GetHddUsageResponseSchema(BaseModel):
         free (float): The free size of the HDD.
         percent (float): The percentage of the HDD used.
     """
-    #Tout est en float pour pouvoir obtenir les valeurs en Go.
-
+    # Tout est en float pour pouvoir obtenir les valeurs en Go.
     total: float
     used: float
     free: float
     percent: float
-
-    

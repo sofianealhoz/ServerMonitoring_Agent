@@ -26,7 +26,7 @@ def main(env: str, debug: bool):
         env (str): The environment name.
         debug (bool): Debug mode flag.
     """
-    
+
     # Inject click option in envionment variable for config
     os.environ["AGENT_ENV"] = env
     os.environ["AGENT_DEBUG"] = str(debug)

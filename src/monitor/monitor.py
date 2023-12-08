@@ -6,14 +6,14 @@ from .LogFunction import count_unique_users, error404
 
 
 class MonitorTask:
-    """A class for monitoring metrics."""
 
-    
+    """A class for monitoring metrics."""
     interval: int
     cpu_percent: list[float]
     ram_percent: list[int]
     num_cores: int
     harddrive_usage: psutil.disk_usage('/')
+<<<<<<< src/monitor/monitor.py
     ram_used : list[float] 
     ram_available : list[float] 
     ram_total : float
@@ -24,6 +24,9 @@ class MonitorTask:
     nb_error404 : int 
     log_directory : str
     
+    #Pour le réseau
+    network_statut: psutil.net_io_counters()
+
 
     def __init__(self) -> None:
         """
@@ -42,6 +45,8 @@ class MonitorTask:
         self.nb_error404 = []
         #self.log_directory = '/var/log/apache2/other_vhosts_access.log' Pour les serveurs
         self.log_directory = "/home/tse/Documents/interfaceAdm/agent/src/monitor/Documents" # Pour l'instant
+        self.network_statut = psutil.net_io_counters(pernic=True)
+
 
     def monitor(self):
         """Continuously monitor and store the result in an attribute."""
@@ -55,6 +60,7 @@ class MonitorTask:
             # On récupère les informations des logs (nb ip connectés, nb d'erreurs 404 ) : 
             self.unique_users = self.unique_users + [count_unique_users(self.log_directory)]
             self.nb_error404 = self.nb_error404 + [error404(self.log_directory)]
+            self.network_statut: psutil.net_io_counters(pernic=True)
             time.sleep(self.interval)
             
 

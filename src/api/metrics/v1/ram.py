@@ -15,7 +15,6 @@ ram_router = APIRouter()
 @ram_router.get(
     "/usageRam",
     response_model=List[GetRamResponseSchema],
-    # response_model_exclude={"id"},
     responses={"400": {"model": ExceptionResponseSchema}},
 )
 async def get_ram(request: Request) -> List[GetRamResponseSchema]:
@@ -29,4 +28,3 @@ async def get_ram(request: Request) -> List[GetRamResponseSchema]:
         List[GetRamResponseSchema]: A list of RAM data as per the response model.
     """
     return await RamService().get_ram(request.app.state.monitortask)
-

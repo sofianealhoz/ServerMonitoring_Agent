@@ -1,0 +1,41 @@
+image: python:latest
+
+before_script:
+  - python --version ; pip --version  # For debugging
+  - pip install virtualenv
+  - virtualenv venv
+  - source venv/bin/activate 
+  - python3 -m venv .venv
+  - source .venv/bin/activate
+  - echo "> Installing requirements"
+  - pip install -r requirements.dev.txt
+  - pip install pytest flake8 psutil
+
+stages: # List of stages for jobs, and their order of execution
+  #- build
+  - test
+  - deploy
+
+#build-job:
+#  stage: build
+#  script:
+unit-test-job:   # This job runs in the test stage.
+  stage: test    # It only starts when the job in the build stage completes successfully.
+  script:
+    - echo "Running unit tests...."
+    - pytest
+    - echo "Tests done."
+
+lint-test-job:   # This job also runs in the test stage.
+  stage: test    # It can run at the same time as unit-test-job (in parallel).
+  script:
+    - echo "Linting code..."
+    - flake8 ./src
+    - echo "No lint issues found."
+
+deploy-job:      # This job runs in the deploy stage.
+  stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
+  environment: production
+  script:
+    - echo "Succès des tests."
+
