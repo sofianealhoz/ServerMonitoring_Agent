@@ -7,7 +7,8 @@ stages: # List of stages for jobs, and their order of execution
 build-job:
   stage: build
   script:
-    - python pip install --upgrade pip
+    - sudo apt install python3
+    - python3 pip install --upgrade pip
     - pip install pytest
     
 unit-test-job:   # This job runs in the test stage.
