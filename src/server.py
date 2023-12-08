@@ -14,6 +14,7 @@ from api import router
 from api.default.default import default_router
 from api.metrics.v1.cpu import cpu_router
 from api.metrics.v1.harddrive import hdd_router
+from api.metrics.v1.log import log_router
 from api.metrics.v1.ram import ram_router
 from api.metrics.v1.network import network_router
 from core.exceptions import CustomException
@@ -35,7 +36,9 @@ def init_routers(fastapi: FastAPI) -> None:
     fastapi.include_router(cpu_router)
     fastapi.include_router(hdd_router)
     fastapi.include_router(ram_router)
+    fastapi.include_router(log_router)
     fastapi.include_router(network_router)
+
 
 
 def init_listeners(fastapi: FastAPI) -> None:
