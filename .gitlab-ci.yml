@@ -36,7 +36,7 @@ lint-test-job:   # This job also runs in the test stage.
 code-coverage-job:
   stage: test
   script:
-  	- echo "Code Coverage of the code..."
+    - echo "Code Coverage of the code..."
     - coverage run -m pytest /src/tests/
     - coverage report --include=src/*
     - echo "Code Coverage finished."
