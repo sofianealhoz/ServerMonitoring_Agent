@@ -40,7 +40,6 @@ def init_routers(fastapi: FastAPI) -> None:
     fastapi.include_router(network_router)
 
 
-
 def init_listeners(fastapi: FastAPI) -> None:
     """
     Initialize event listeners and exception handlers for the FastAPI fastapi.
