@@ -37,7 +37,7 @@ code-coverage-job:
   stage: test
   script:
     - echo "Code Coverage of the code..."
-    - coverage run -m pytest /src/tests/
+    - coverage run -m pytest src/tests/
     - coverage report --include=src/*
     - echo "Code Coverage finished."
     
