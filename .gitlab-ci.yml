@@ -9,7 +9,7 @@ before_script:
   - source .venv/bin/activate
   - echo "> Installing requirements"
   - pip install -r requirements.dev.txt
-  - pip install pytest flake8 psutil coverage
+  - pip install pytest flake8 psutil coverage apache-log-parser
 
 stages: # List of stages for jobs, and their order of execution
   #- build
