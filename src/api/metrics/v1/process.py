@@ -17,12 +17,12 @@ process_router = APIRouter()
 )
 async def get_ram(request: Request) -> List[GetTopProcessSchema]:
     """
-    Route to get a list of RAM data.
+    Route to get biggest Process.
 
     Args:
         request (Request): The incoming request.
 
     Returns:
-        List[GetRamResponseSchema]: A list of RAM data as per the response model.
+        List[GetTopProcessSchema]: A list of Process as per the response model.
     """
     return await ProcessService().get_process(request.app.state.monitortask)
