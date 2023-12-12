@@ -4,6 +4,7 @@ from .hdd import GetHddUsageResponseSchema
 from .ram import GetRamResponseSchema
 from .log import GetLogResponseSchema
 from .network import GetNetworkResponseSchema
+from .process import GetTopProcessSchema
 
 
 class ExceptionResponseSchema(BaseModel):
@@ -18,4 +19,5 @@ __all__ = [
     "GetNetworkResponseSchema",
     "ExceptionResponseSchema",
     "GetLogResponseSchema",
+    "GetTopProcessSchema",
 ]

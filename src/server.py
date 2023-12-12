@@ -17,6 +17,7 @@ from api.metrics.v1.harddrive import hdd_router
 from api.metrics.v1.log import log_router
 from api.metrics.v1.ram import ram_router
 from api.metrics.v1.network import network_router
+from api.metrics.v1.process import process_router
 from core.exceptions import CustomException
 from core.config import get_config
 from monitor import MonitorTask
@@ -38,6 +39,7 @@ def init_routers(fastapi: FastAPI) -> None:
     fastapi.include_router(ram_router)
     fastapi.include_router(log_router)
     fastapi.include_router(network_router)
+    fastapi.include_router(process_router)
 
 
 def init_listeners(fastapi: FastAPI) -> None:
