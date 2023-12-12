@@ -68,7 +68,7 @@ class MonitorTask:
             # On récupère les informations des logs (nb ip connectés, nb d'erreurs 404 ) : 
             self.unique_users = self.unique_users + [count_unique_users(self.log_directory)]
             self.nb_error404 = self.nb_error404 + [error404(self.log_directory)]
-            self.network_statut: psutil.net_io_counters(pernic=True)
+            self.network_statut = psutil.net_io_counters(pernic=True)
 
             # On récupère les informations sur les processus (pid, name, rss, cpu_percent) :
             for proc in psutil.process_iter():
