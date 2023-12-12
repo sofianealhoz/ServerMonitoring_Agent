@@ -2,7 +2,6 @@
 import threading
 import os
 import sys
-import psutil
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
@@ -84,6 +83,7 @@ def test_get_hdd():
     
     # restore monitortask for the next test
     app.state.monitortask = save_app
+
 
 def test_get_cpu_core():
     response = client.get("/metrics/v1/cpu/core")
