@@ -1,13 +1,9 @@
-"""
-This module defines a data model for Processus that use a lot
-"""
 from pydantic import BaseModel
 
 
-# Processus data model
-class Process(BaseModel):
+class GetTopProcessSchema(BaseModel):
     """
-    Pydantic data model for representing Top Processus information.
+    Pydantic data model for the response schema representing Top Processus information.
 
     Attributes:
         name: The name of the processus.    
@@ -16,7 +12,9 @@ class Process(BaseModel):
         pid: The PID of the processus.
     """
 
-    name: str
-    cpu_percent: float
-    rss: float
     pid: int
+    name: str
+    rss: float
+    cpu_percent: float
+    
+    
