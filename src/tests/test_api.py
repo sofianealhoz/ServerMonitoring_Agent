@@ -108,6 +108,7 @@ def test_get_network_usage():
     # restore monitortask for the next test
     app.state.monitortask = save_app
 
+
 def test_log_functions():
     log_file_path = "src/monitor/Documents"
     
