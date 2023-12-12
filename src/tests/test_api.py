@@ -8,6 +8,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from fastapi.testclient import TestClient
 from server import app
 from monitor import MonitorTask
+from src.monitor.LogFunction import count_unique_users, error404
 
 
 class MonitorTaskFake(MonitorTask):
@@ -106,3 +107,18 @@ def test_get_network_usage():
     
     # restore monitortask for the next test
     app.state.monitortask = save_app
+
+
+def test_log_functions():
+    log_file_path = "src/monitor/Documents"
+    
+    # Test count_unique_users
+    unique_users = count_unique_users(log_file_path)
+    assert unique_users == 2, f"Expected 2 unique user, but got {unique_users}"
+
+    # Test error404
+    count_404 = error404(log_file_path)
+    assert count_404 == 2, f"Expected 2 occurrences of 404 errors, but got {count_404}"
+
+
+
