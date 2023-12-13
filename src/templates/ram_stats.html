@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAM Statistics</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            margin-top: 50px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        p {
+            margin: 10px 0;
+        }
+
+        span {
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>RAM Statistics</h1>
+    <p>Total RAM: <span id="total-ram">{{ ram_stats.total }} GB</span></p>
+    <p>Available RAM: <span id="available-ram">{{ ram_stats.available }} GB</span></p>
+    <p>Used RAM: <span id="used-ram">{{ ram_stats.used }} GB</span></p>
+    <p>RAM Usage: <span id="ram-usage">{{ ram_stats.percent }}%</span></p>
+</div>
+
+</body>
+</html>

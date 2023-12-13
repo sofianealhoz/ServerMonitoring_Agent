@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>HDD Usage Graph</title>
+    <meta charset="UTF-8">
+    <!-- Chargement de Plotly.js -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+    <div id="hdd-graph"></div>
+
+    <script>
+        var layout = {
+            title: 'HDD Usage Over Time',
+            xaxis: {
+                title: 'Time',
+                type: 'date',
+                tickformat: '%H:%M:%S'
+            },
+            yaxis: {
+                title: 'HDD Usage (%)',
+                range: [0, 100]
+            }
+        };
+
+        function updateGraph() {
+            fetch('/hdd/data')
+                .then(response => response.json())
+                .then(data => {
+                    var usages = data.usages;
+                    var times = data.times.map(ts => new Date(ts * 1000));
+
+                    if (usages.length > {{ max_points }}) {
+                        usages = usages.slice(-{{ max_points }});
+                        times = times.slice(-{{ max_points }});
+                    }
+
+                    var hddPercentages = usages.map(u => u + '%');
+                    var points = {
+                        x: times,
+                        y: usages,
+                        text: hddPercentages,
+                        type: 'scatter',
+                        mode: 'lines+markers'
+                    };
+
+                    Plotly.newPlot('hdd-graph', [points], layout);
+                });
+        }
+
+        setInterval(updateGraph, 1000);
+        updateGraph(); // Appel initial
+    </script>
+</body>
+</html>

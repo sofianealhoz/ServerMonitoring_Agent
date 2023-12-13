@@ -14,8 +14,8 @@
             title: 'CPU Usage Over Time',
             xaxis: {
                 title: 'Time',
-                type: 'date',  // Utilisation du type de données date
-                tickformat: '%H:%M:%S'  // Format des ticks de l'axe X pour l'heure
+                type: 'date',
+                tickformat: '%H:%M:%S'
             },
             yaxis: {
                 title: 'CPU Usage (%)',
@@ -23,8 +23,8 @@
             }
         };
 
-        function updateGraph() {
-            fetch('/graph/data')
+        function updateCPUGraph() {
+            fetch('/cpu/data')
                 .then(response => response.json())
                 .then(data => {
                     var usages = data.usages;
@@ -48,8 +48,8 @@
                 });
         }
 
-        setInterval(updateGraph, 1000);
-        updateGraph(); // Appel initial
+        setInterval(updateCPUGraph, 1000);
+        updateCPUGraph();
     </script>
 </body>
 </html>

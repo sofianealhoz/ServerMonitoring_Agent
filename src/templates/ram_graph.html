@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>RAM Usage Graph</title>
+    <meta charset="UTF-8">
+    <!-- Chargement de Plotly.js -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+    <div id="ram-graph"></div>
+
+    <script>
+        var layout = {
+            title: 'RAM Usage Over Time',
+            xaxis: {
+                title: 'Time',
+                type: 'date',
+                tickformat: '%H:%M:%S'
+            },
+            yaxis: {
+                title: 'RAM Usage (%)',
+                range: [0, 100]
+            }
+        };
+
+        function updateRAMGraph() {
+            fetch('/ram/data')
+                .then(response => response.json())
+                .then(data => {
+                    var usages = data.usages;
+                    var times = data.times.map(ts => new Date(ts * 1000));
+
+                    if (usages.length > {{ max_points }}) {
+                        usages = usages.slice(-{{ max_points }});
+                        times = times.slice(-{{ max_points }});
+                    }
+
+                    var ramPercentages = usages.map(u => u + '%');
+                    var points = {
+                        x: times,
+                        y: usages,
+                        text: ramPercentages,
+                        type: 'scatter',
+                        mode: 'lines+markers'
+                    };
+
+                    Plotly.newPlot('ram-graph', [points], layout);
+                });
+        }
+
+        setInterval(updateRAMGraph, 1000);
+        updateRAMGraph();
+    </script>
+</body>
+</html>
