@@ -32,3 +32,7 @@ prod : no hot reload
 Run project with `make debug` and consult url in log for api doc at `/docs` or `/redoc`.
 
 Application is running 2 threads, one for the API to expose metrics and one for collecting metrics.
+
+## Project Description
+
+Deployment of a Docker container on a server. Container has an Agent that analyse some metrics. 
