@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HDD Statistics</title>
+    <style>
+        /* Vos styles CSS ici */
+        /* ... */
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>HDD Statistics</h1>
+        <p>Total HDD: <span>{{ hdd_data.total }} GB</span></p>
+        <p>Used HDD: <span>{{ hdd_data.used }} GB</span></p>
+        <p>Free HDD: <span>{{ hdd_data.free }} GB</span></p>
+        <p>HDD Usage: <span>{{ hdd_data.percent }}%</span></p>
+    </div>
+
+    <script>
+        function fetchHddDataAndUpdateUI() {
+            fetch('/hdd/stats')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('total-hdd').innerText = data.total.toFixed(2) + ' GB';
+                    document.getElementById('used-hdd').innerText = data.used.toFixed(2) + ' GB';
+                    document.getElementById('free-hdd').innerText = data.free.toFixed(2) + ' GB';
+                    document.getElementById('hdd-usage').innerText = data.percent.toFixed(2) + '%';
+                })
+                .catch(error => console.error('Error:', error));
+        }
+    
+        // Mettre à jour les données toutes les deux secondes
+        setInterval(fetchHddDataAndUpdateUI, 2000);
+    
+        // Appeler fetchHddDataAndUpdateUI() pour la première fois au chargement de la page
+        fetchHddDataAndUpdateUI();
+    </script>
+    
+
+</body>
+</html>

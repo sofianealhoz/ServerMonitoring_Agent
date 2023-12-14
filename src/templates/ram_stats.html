@@ -37,8 +37,46 @@
     </style>
 </head>
 <body>
-
-<div class="container">
+    <div class="container">
+        <script>
+            function updateRAMStats() {
+                console.log('Updating RAM stats...');
+        
+                fetch('/ram/stats')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Received data:', data);
+        
+                        try {
+                            document.getElementById('total-ram').innerText = data.total.toFixed(2) + ' GB';
+                            document.getElementById('available-ram').innerText = data.available.toFixed(2) + ' GB';
+                            document.getElementById('used-ram').innerText = data.used.toFixed(2) + ' GB';
+                            document.getElementById('ram-usage').innerText = data.percent.toFixed(2) + '%';
+        
+                            console.log('RAM stats updated successfully.');
+                        } catch (error) {
+                            console.error('Error updating RAM stats:', error);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching or updating RAM data:', error);
+                    });
+            }
+            
+            // Appel initial de la fonction pour récupérer les données
+            updateRAMStats();
+            
+            // Appel périodique pour actualiser les données
+            setInterval(updateRAMStats, 2000); // Toutes les 2 secondes (2000 millisecondes)
+        </script>
+        
+        
+        
     <h1>RAM Statistics</h1>
     <p>Total RAM: <span id="total-ram">{{ ram_stats.total }} GB</span></p>
     <p>Available RAM: <span id="available-ram">{{ ram_stats.available }} GB</span></p>
