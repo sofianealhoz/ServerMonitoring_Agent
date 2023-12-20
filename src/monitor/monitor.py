@@ -3,7 +3,6 @@
 import time
 import psutil
 from .LogFunction import count_unique_users, error404
-from domain.services import SystemService  # Importez SystemService ici
 
 class MonitorTask:
 
@@ -18,14 +17,16 @@ class MonitorTask:
         self.nb_error404 = []
         self.log_directory = "src/monitor/Documents"
         self.network_statut = psutil.net_io_counters()
-        self.system_service = SystemService()  # Initialisez SystemService ici
 
-    def update_system_info(self):
+    def update_system_info(self, system_service):
         """Update system information in the MonitorTask."""
-        system_info = self.system_service.get_system_info()
+        system_info = system_service.get_system_info()
         # Utilisez les informations du système au besoin
 
     def monitor(self):
+        from __init__.py import SystemService  # Importez SystemService depuis services
+        system_service = SystemService()  # Initialisez SystemService ici
+
         while True:
             self.cpu_percent = psutil.cpu_percent(percpu=True)
             self.harddrive_usage = psutil.disk_usage('/')
@@ -36,7 +37,7 @@ class MonitorTask:
             self.nb_error404.append(error404(self.log_directory))
             self.network_statut = psutil.net_io_counters(pernic=True)
 
-            self.update_system_info()
+            self.update_system_info(system_service)
 
             for proc in psutil.process_iter():
                 try:
