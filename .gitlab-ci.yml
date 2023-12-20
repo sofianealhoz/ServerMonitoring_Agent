@@ -1,4 +1,4 @@
-image: devops.telecomste.fr:5050/printerfaceadmin/2023-24/group1/agent
+image: devops.telecomste.fr:5050/printerfaceadmin/2023-24/group1/agent/image_ci
 
 before_script:
   - python --version ; pip --version  # For debugging
