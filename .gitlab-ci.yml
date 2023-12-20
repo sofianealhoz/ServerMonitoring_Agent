@@ -41,10 +41,12 @@ code-coverage-job:
     - coverage report --include=src/*
     - echo "Code Coverage finished."
     
-
-deploy-job:      # This job runs in the deploy stage.
-  stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
+deploy-job:
+  stage: deploy
   environment: production
   script:
-    - echo "Tests success."
+    - echo "Building and launching agent Docker image..."
+    - docker build -t agent_image:tag .
+    - docker run -d --name agent_container -p 8080:80 agnet_image:tag
+    - echo "Docker agent image built and container launched."
 
