@@ -10,6 +10,11 @@ before_script:
   - echo "> Installing requirements"
   - pip install -r requirements.dev.txt
   - pip install pytest flake8 psutil coverage apache-log-parser
+  - echo "Installing Docker..."
+  - apt-get update -qy
+  - apt-get install -y docker.io
+  - docker --version
+
 
 stages: # List of stages for jobs, and their order of execution
   #- build
