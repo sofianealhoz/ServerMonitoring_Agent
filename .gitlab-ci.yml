@@ -46,12 +46,10 @@ code-coverage-job:
     - coverage report --include=src/*
     - echo "Code Coverage finished."
     
-deploy-job:
+eploy-job:
   stage: deploy
   environment: production
   script:
     - echo "Building and launching agent Docker image..."
-    - docker build -t agent_image:tag .
-    - docker run -d --name agent_container -p 8080:80 agent_image:tag
+    - docker run -v /var/run/docker.sock:/var/run/docker.sock -p 8080:80 -d agent_image:tag
     - echo "Docker agent image built and container launched."
-
