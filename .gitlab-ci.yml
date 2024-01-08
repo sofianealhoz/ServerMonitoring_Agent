@@ -8,6 +8,8 @@ stages: # List of stages for jobs, and their order of execution
 build-job:
   stage: build
   image: docker:latest
+  service: 
+    - docker:dind
   script:
    - echo "Building Docker image..."
    - echo $DOCKER_REGISTRY_TOKEN | docker login -u $CI_REGISTRY_USER --password-stdin
