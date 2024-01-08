@@ -44,8 +44,10 @@ code-coverage-job:
 
 deploy-job:      # This job runs in the deploy stage.
   stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
+  image: docker:latest
   environment: production
   script:
     - echo "Tests success."
     - echo "Deploying project..."
     - docker run -i -p 8080:8000 image_runner
+
