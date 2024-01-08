@@ -1,13 +1,21 @@
 image: devops.telecomste.fr:5050/printerfaceadmin/2023-24/group1/agent/image_ci
 
 stages: # List of stages for jobs, and their order of execution
-  #- build
+  - build
   - test
   - deploy
 
-#build-job:
-#  stage: build
-#  script:
+build-job:
+  stage: build
+  script:
+   - echo "Building Docker image..."
+   - docker build -t devops.telecomste.fr:5050/printerfaceadmin/2023-24/group1/agent/mon_app:$CI_COMMIT_REF_SLUG .
+   - echo $DOCKER_REGISTRY_TOKEN | docker login -u $CI_REGISTRY_USER --password-stdin
+   - docker push devops.telecomste.fr:5050/printerfaceadmin/2023-24/group1/agent/mon_app:$CI_COMMIT_REF_SLUG
+
+  only:
+   - main
+
 unit-test-job:   # This job runs in the test stage.
   stage: test    # It only starts when the job in the build stage completes successfully.
   before_script:
@@ -68,6 +76,14 @@ deploy-job:
   script:
     - echo "Tests success."
     - echo "Deploying project..."
+    - 'which ssh-agent || ( apk add openssh-client )' # Install SSH client if not present
+    - eval $(ssh-agent -s) # Start the SSH agent
+    - echo "$SSH_PRIVATE_KEY" | ssh-add - # Add the SSH key stored in $SSH_PRIVATE_KEY
+    - ssh-keyscan -H $SERVER_HOST >> ~/.ssh/known_hosts # Add your server to known hosts
+    - ssh grudu@karadoc.telecomste.net -p 22103  "docker pull devops.telecomste.fr:5050/printerfaceadmin/2023-24/group1/agent/mon_app:$CI_COMMIT_REF_SLUG" # Pull the Docker image on your server
+    - ssh grudu@karadoc.telecomste.net -p 22103  "docker run -d -p 8080:8000 devops.telecomste.fr:5050/printerfaceadmin/2023-24/group1/agent/mon_app:$CI_COMMIT_REF_SLUG" # Run the Docker image on your server
     #- docker run -i -p 8080:8000 image_runner
     # Il faut se connecter au serveur, (possibilité de mettre des secrets sur Gitlab) puis lancer le docker run -i ... DANS LE SERVEUR.
     # "scp -P 22103 imageAgent.tar grudu@karadoc.telecomste.net:/home/grudu"
+
+
