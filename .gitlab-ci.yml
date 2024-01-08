@@ -10,8 +10,8 @@ build-job:
   image: docker:latest
   script:
    - echo "Building Docker image..."
-   - docker build -t devops.telecomste.fr:5050/printerfaceadmin/2023-24/group1/agent/mon_app:$CI_COMMIT_REF_SLUG .
    - echo $DOCKER_REGISTRY_TOKEN | docker login -u $CI_REGISTRY_USER --password-stdin
+   - docker build -t devops.telecomste.fr:5050/printerfaceadmin/2023-24/group1/agent/mon_app:$CI_COMMIT_REF_SLUG .
    - docker push devops.telecomste.fr:5050/printerfaceadmin/2023-24/group1/agent/mon_app:$CI_COMMIT_REF_SLUG
 
   only:
