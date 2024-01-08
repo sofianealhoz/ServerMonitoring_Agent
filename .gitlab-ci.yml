@@ -7,6 +7,7 @@ stages: # List of stages for jobs, and their order of execution
 
 build-job:
   stage: build
+  image: docker:latest
   script:
    - echo "Building Docker image..."
    - docker build -t devops.telecomste.fr:5050/printerfaceadmin/2023-24/group1/agent/mon_app:$CI_COMMIT_REF_SLUG .
