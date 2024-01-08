@@ -38,9 +38,10 @@ Application is running 2 threads, one for the API to expose metrics and one for 
 A tool for monitoring servers was created with the following functionalities:
 
 Establishing connections to designated machines.
-Retrieving CPU and RAM information from these remote machines.
-Extracting information from logs on the monitored machines.
+Retrieving CPU, RAM, Hard Drive information, log, usage network from these remote machines.
 Implementing continuous delivery for the project through a Docker image.
+
+
 This project was developed within a DevOps framework, ensuring adherence to the following practices:
 
 Writing tests and executing them with every push.
