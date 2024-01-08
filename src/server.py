@@ -63,6 +63,7 @@ def init_listeners(fastapi: FastAPI) -> None:
     @fastapi.on_event("startup")
     def on_start_up():
         thread = threading.Thread(target=fastapi.state.monitortask.monitor, daemon=True)
+        
         thread.start()
 
 

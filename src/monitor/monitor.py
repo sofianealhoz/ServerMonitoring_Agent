@@ -53,6 +53,14 @@ class MonitorTask:
         self.hostname = []
         self.ip =  []
 
+        for user_info in psutil.users():
+            name = user_info.name
+            host = user_info.host
+            ip = socket.gethostbyname(socket.gethostname())
+
+            self.nickname = self.nickname + [name]
+            self.hostname = self.hostname + [host]  
+            self.ip = self.ip + [ip]
         # self.log_directory = '/var/log/apache2/other_vhosts_access.log' Pour les serveurs
         self.log_directory = "src/monitor/Documents"  # Pour l'instant
         self.network_statut = psutil.net_io_counters(pernic=True)
