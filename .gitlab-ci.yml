@@ -70,4 +70,4 @@ deploy-job:
     - echo "Deploying project..."
     #- docker run -i -p 8080:8000 image_runner
     # Il faut se connecter au serveur, (possibilité de mettre des secrets sur Gitlab) puis lancer le docker run -i ... DANS LE SERVEUR.
-
+    # "scp -P 22103 imageAgent.tar grudu@karadoc.telecomste.net:/home/grudu"
