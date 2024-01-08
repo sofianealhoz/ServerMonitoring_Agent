@@ -40,7 +40,6 @@ code-coverage-job:
     - coverage run -m pytest src/tests/
     - coverage report --include=src/*
     - echo "Code Coverage finished."
-    
 
 deploy-job:      # This job runs in the deploy stage.
   stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
@@ -50,11 +49,11 @@ deploy-job:      # This job runs in the deploy stage.
     - apk add --no-cache python3 py3-pip
     - echo "Tests success."
     - echo "Deploying project..."
-    - docker run -i -p 8080:8000 image_runner
-    - pip install virtualenv
+    - pip install virtualvenv
     - virtualenv venv
     - source venv/bin/activate
-  	- python3 -m venv .venv 
+    - python3 -m venv .venv
     - source .venv/bin/activate
+    - docker run -i -p 8080:8000 image_runner
 
 
