@@ -1,16 +1,5 @@
 image: devops.telecomste.fr:5050/printerfaceadmin/2023-24/group1/agent/image_ci
 
-before_script:
-  - python --version ; pip --version  # For debugging
-  - pip install virtualenv
-  - virtualenv venv
-  - source venv/bin/activate 
-  - python3 -m venv .venv
-  - source .venv/bin/activate
-  - echo "> Installing requirements"
-  - pip install -r requirements.dev.txt
-  - pip install pytest flake8 psutil coverage apache-log-parser
-
 stages: # List of stages for jobs, and their order of execution
   #- build
   - test
@@ -21,6 +10,17 @@ stages: # List of stages for jobs, and their order of execution
 #  script:
 unit-test-job:   # This job runs in the test stage.
   stage: test    # It only starts when the job in the build stage completes successfully.
+  
+	before_script:
+  	- python --version ; pip --version  # For debugging
+  	- pip install virtualenv
+  	- virtualenv venv
+ 		- source venv/bin/activate 
+ 		- python3 -m venv .venv
+  	- source .venv/bin/activate
+  	- echo "> Installing requirements"
+  	- pip install -r requirements.dev.txt
+  	- pip install pytest flake8 psutil coverage apache-log-parser
   script:
     - echo "Running unit tests...."
     - pytest
@@ -28,6 +28,17 @@ unit-test-job:   # This job runs in the test stage.
 
 lint-test-job:   # This job also runs in the test stage.
   stage: test    # It can run at the same time as unit-test-job (in parallel).
+  
+	before_script:
+  	- python --version ; pip --version  # For debugging
+  	- pip install virtualenv
+  	- virtualenv venv
+  	- source venv/bin/activate 
+  	- python3 -m venv .venv
+  	- source .venv/bin/activate
+  	- echo "> Installing requirements"
+  	- pip install -r requirements.dev.txt
+  	- pip install pytest flake8 psutil coverage apache-log-parser
   script:
     - echo "Linting code..."
     - flake8 ./src
@@ -35,6 +46,17 @@ lint-test-job:   # This job also runs in the test stage.
 
 code-coverage-job:
   stage: test
+  
+	before_script:
+  	- python --version ; pip --version  # For debugging
+  	- pip install virtualenv
+  	- virtualenv venv
+  	- source venv/bin/activate 
+  	- python3 -m venv .venv
+  	- source .venv/bin/activate
+  	- echo "> Installing requirements"
+  	- pip install -r requirements.dev.txt
+  	- pip install pytest flake8 psutil coverage apache-log-parser
   script:
     - echo "Code Coverage of the code..."
     - coverage run -m pytest src/tests/
