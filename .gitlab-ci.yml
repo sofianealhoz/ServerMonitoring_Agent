@@ -47,4 +47,5 @@ deploy-job:      # This job runs in the deploy stage.
   environment: production
   script:
     - echo "Tests success."
-
+    - echo "Deploying project..."
+    - docker run -i -p 8080:8000 image_runner

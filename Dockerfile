@@ -1,7 +1,7 @@
 FROM python:alpine
 
 WORKDIR /app
-
+EXPOSE 8080
 RUN apk update && \
     apk add --no-cache build-base libffi-dev openssl-dev python3-dev
     
