@@ -94,6 +94,7 @@ deploy-job:
     - eval $(ssh-agent -s) # Start the SSH agent
 #    - echo "$SSH_PRIVATE_KEY" | ssh-add - # Add the SSH key stored in $SSH_PRIVATE_KEY
 #    - ssh-keyscan -p 22103 -H karadoc.telecomste.net >> ~/.ssh/known_hosts # Add your server to known hosts
+    - ssh grudu@karadoc.telecomste.net -p 22103 "echo $DOCKER_REGISTRY_TOKEN | docker login -u $CI_REGISTRY_USER --password-stdin devops.telecomste.fr:5050"
     - ssh grudu@karadoc.telecomste.net -p 22103  "docker pull devops.telecomste.fr:5050/printerfaceadmin/2023-24/group1/agent/mon_app:$CI_COMMIT_REF_SLUG" # Pull the Docker image on your server
     - ssh grudu@karadoc.telecomste.net -p 22103  "docker run -d -p 8080:8000 devops.telecomste.fr:5050/printerfaceadmin/2023-24/group1/agent/mon_app:$CI_COMMIT_REF_SLUG" # Run the Docker image on your server
     #- docker run -i -p 8080:8000 image_runner
