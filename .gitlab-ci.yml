@@ -82,6 +82,9 @@ deploy-job:
   stage: deploy
   image: docker:latest
   environment: production
+  before_script:
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
   script:
     - echo "Tests success."
     - echo "Deploying project..."
