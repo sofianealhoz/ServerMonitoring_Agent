@@ -85,15 +85,15 @@ deploy-job:
   before_script:
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
-    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-    - chmod 600 ~/.ssh/id_rsa
+    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa_CI
+    - chmod 600 ~/.ssh/id_rsa_CI
   script:
     - echo "Tests success." #
     - echo "Deploying project..."
     - 'which ssh-agent || ( apk add openssh-client )' # Install SSH client if not present
     - eval $(ssh-agent -s) # Start the SSH agent
     - ssh-add <(echo "$SSH_PRIVATE_KEY")
-    - ssh -o StrictHostKeyChecking=no -p 22103 grudu@karadoc.telecomste.net "echo 'SSH Connection Successful'"    
+    - ssh -i ~/.ssh/id_rsa_CI -o StrictHostKeyChecking=no -p 22103 grudu@karadoc.telecomste.net "echo 'SSH Connection Successful'"    
 #    - echo "$SSH_PRIVATE_KEY" | ssh-add - # Add the SSH key stored in $SSH_PRIVATE_KEY
 #    - ssh-keyscan -p 22103 -H karadoc.telecomste.net >> ~/.ssh/known_hosts # Add your server to known hosts
     - echo "$CI_COMMIT_REF_SLUG"
