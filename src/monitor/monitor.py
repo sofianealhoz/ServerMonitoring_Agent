@@ -53,6 +53,7 @@ class MonitorTask:
         self.hostname = []
         self.ip =  []
 
+        # On récupère les informations sur l'utilisateur (nickname, hostname, ip)
         for user_info in psutil.users():
             name = user_info.name
             host = user_info.host
@@ -61,6 +62,7 @@ class MonitorTask:
             self.nickname = self.nickname + [name]
             self.hostname = self.hostname + [host]  
             self.ip = self.ip + [ip]
+
         # self.log_directory = '/var/log/apache2/other_vhosts_access.log' Pour les serveurs
         self.log_directory = "src/monitor/Documents"  # Pour l'instant
         self.network_statut = psutil.net_io_counters(pernic=True)
@@ -87,15 +89,7 @@ class MonitorTask:
             self.nb_error404 = self.nb_error404 + [error404(self.log_directory)]
             self.network_statut = psutil.net_io_counters(pernic=True)
             
-            # On récupère les informations sur l'utilisateur (nickname, hostname, ip)
-            for user_info in psutil.users():
-                name = user_info.name
-                host = user_info.host
-                ip = socket.gethostbyname(socket.gethostname())
-
-                self.nickname = self.nickname + [name]
-                self.hostname = self.hostname + [host]  
-                self.ip = self.ip + [ip]
+            
 
             # On récupère les informations sur les processus (pid, name, rss, cpu_percent) :
             for proc in psutil.process_iter():
