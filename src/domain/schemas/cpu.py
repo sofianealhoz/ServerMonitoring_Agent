@@ -15,6 +15,7 @@ class GetCpuResponseSchema(BaseModel):
 
     id: int
     usage: str
+    frequency: float
 
 
 class GetCpuCoreResponseSchema(BaseModel):

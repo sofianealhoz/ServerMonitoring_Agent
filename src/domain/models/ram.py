@@ -18,3 +18,4 @@ class ram(BaseModel):
     available: float
     used: float
     percent: float
+    frequency: float

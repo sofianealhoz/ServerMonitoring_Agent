@@ -16,6 +16,8 @@ class MonitorTask:
     ram_used: list[float] 
     ram_available: list[float] 
     ram_total: float
+    cpu_frequency: float 
+    ram_frequency : float
     
     # Pour les Log
     unique_users: int 
@@ -52,6 +54,8 @@ class MonitorTask:
         self.nickname = []
         self.hostname = []
         self.ip =  []
+        self.cpu_frequency = psutil.cpu_freq().current 
+        self.ram_frequency = psutil.virtual_memory().available
 
         # On récupère les informations sur l'utilisateur (nickname, hostname, ip)
         for user_info in psutil.users():
@@ -105,7 +109,7 @@ class MonitorTask:
             # Edit procObj[...] : 'rss' pour la mémoire, 'cpu_percent' pour le CPU
             self.listOfProcessNames = sorted(self.listOfProcessNames, key=lambda procObj: procObj['cpu_percent'], reverse=True)
             self.listOfFiveProcessNames = self.listOfProcessNames[:5]
-
+            
             time.sleep(self.interval)
             
     def __str__(self) -> str:

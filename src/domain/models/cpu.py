@@ -2,6 +2,7 @@
 This module defines a data model for CPU information.
 """
 from pydantic import BaseModel
+from typing import Optional
 
 
 # CPU data model
@@ -16,3 +17,4 @@ class Cpu(BaseModel):
 
     id: int
     usage: str
+    frequency:Optional[float] = 0.0
