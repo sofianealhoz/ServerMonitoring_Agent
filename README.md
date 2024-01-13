@@ -32,3 +32,49 @@ prod : no hot reload
 Run project with `make debug` and consult url in log for api doc at `/docs` or `/redoc`.
 
 Application is running 2 threads, one for the API to expose metrics and one for collecting metrics.
+ 
+## Description
+
+A tool for monitoring servers was created with the following functionalities:
+
+Establishing connections to designated machines.
+Retrieving CPU, RAM, Hard Drive information, log, usage network from these remote machines.
+Implementing continuous delivery for the project through a Docker image.
+
+
+This project was developed within a DevOps framework, ensuring adherence to the following practices:
+
+Writing tests and executing them with every push.
+Implementing continuous integration.
+Employing a linter for code quality checks.
+Calculating and analyzing code coverage statistics.
+
+
+
+
+
+
+## Installation
+To run this project all you need is to pull & run our Docker image :
+
+To run the docker image that contains our project, run the following commands :
+
+```bash
+docker login
+```
+The username is: ...
+
+The password is: ...
+
+```bash
+docker pull ...
+```
+```bash
+docker run -p ...
+```
+
+## Built With
+* Python
+* Docker
+* Dart
+
