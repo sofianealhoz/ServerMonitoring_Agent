@@ -17,3 +17,4 @@ class GetRamResponseSchema(BaseModel):
     available: float
     used: float
     percent: float  # en %
+    frequency: float

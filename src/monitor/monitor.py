@@ -17,6 +17,7 @@ class MonitorTask:
     ram_available: list[float] 
     ram_total: float
     cpu_frequency: float 
+    ram_frequency : float
     
     # Pour les Log
     unique_users: int 
@@ -54,6 +55,7 @@ class MonitorTask:
         self.hostname = []
         self.ip =  []
         self.cpu_frequency = psutil.cpu_freq().current 
+        self.ram_frequency = psutil.virtual_memory().available
 
         # On récupère les informations sur l'utilisateur (nickname, hostname, ip)
         for user_info in psutil.users():
