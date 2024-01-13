@@ -78,16 +78,16 @@ code-coverage-job:
     - coverage report --include=src/*
     - echo "Code Coverage finished."
 
-deploy-job:
-  stage: deploy
-  image: docker:latest
-  environment: production
-  before_script:
-    - mkdir -p ~/.ssh
-    - chmod 700 ~/.ssh
-    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa_CI
-    - chmod 600 ~/.ssh/id_rsa_CI
-  script:
+#deploy-job:
+#  stage: deploy
+#  image: docker:latest
+#  environment: production
+#  before_script:
+#    - mkdir -p ~/.ssh
+#    - chmod 700 ~/.ssh
+#    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa_CI
+#    - chmod 600 ~/.ssh/id_rsa_CI
+#  script:
 #    - echo "Tests success." #
 #    - echo "Deploying project..."
 #    - 'which ssh-agent || ( apk add openssh-client )' # Install SSH client if not present
