@@ -17,7 +17,7 @@ class MonitorTask:
     ram_available: list[float] 
     ram_total: float
     cpu_frequency: float 
-    ram_frequency : float
+    ram_frequency: float
     
     # Pour les Log
     unique_users: int 
@@ -32,9 +32,9 @@ class MonitorTask:
     listOfFiveProcessNames = []
 
     # Pour les infos utilisateur
-    nickname : list[str]
-    hostname : list[str]
-    ip : list[str]
+    nickname: list[str]
+    hostname: list[str]
+    ip: list[str]
 
     def __init__(self) -> None:
         """
@@ -53,8 +53,8 @@ class MonitorTask:
         self.nb_error404 = []
         self.nickname = []
         self.hostname = []
-        self.ip =  []
-        self.cpu_frequency = psutil.cpu_freq().current 
+        self.ip = []
+        # self.cpu_frequency = psutil.cpu_freq().current 
         self.ram_frequency = psutil.virtual_memory().available
 
         # On récupère les informations sur l'utilisateur (nickname, hostname, ip)
@@ -80,7 +80,8 @@ class MonitorTask:
     def monitor(self):
         """Continuously monitor and store the result in an attribute."""
         while True:
-            self.cpu_percent = psutil.cpu_percent(percpu=True)   
+            self.cpu_percent = psutil.cpu_percent(percpu=True)  
+            self.cpu_frequency = psutil.cpu_freq().current 
 
             # On récupère les informations sur le disque dur (total, used, free, percent) :
             self.harddrive_usage = psutil.disk_usage('/') 

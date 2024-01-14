@@ -7,6 +7,7 @@ from .network import GetNetworkResponseSchema
 from .process import GetTopProcessSchema
 from .user import GetUserResponseSchema
 
+
 class ExceptionResponseSchema(BaseModel):
     error: str
 

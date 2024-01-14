@@ -3,6 +3,7 @@ This module defines a data model for user information.
 """
 from pydantic import BaseModel
 
+
 class User(BaseModel):
     """
     Pydantic data model for representing user information.
@@ -15,7 +16,6 @@ class User(BaseModel):
     nickname: str
     hostname: str
     ip: str
-
 
     def __str__(self):
         return f"User(nickname={self.nickname}, hostname={self.hostname}, ip={self.ip})"

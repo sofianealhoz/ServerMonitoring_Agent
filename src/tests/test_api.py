@@ -26,7 +26,7 @@ class MonitorTaskFake(MonitorTask):
         free=50.75762939453125,
         percent=14.7
     )
-
+    cpu_frequency = "1830.00"
     cpu_percent: list[float] = ["10", "12"]
     num_cores: int = 3
 
@@ -52,7 +52,7 @@ def test_get_cpu_usage():
     app.state.monitortask = MonitorTaskFake()
     response = client.get("/metrics/v1/cpu/usage")
     assert response.status_code == 200
-    assert response.json() == [{"id": 0, "usage": "10"}, {"id": 1, "usage": "12"}]
+    assert response.json() == [{"id": 0, "usage": "10", "frequency": 1830.00}, {"id": 1, "usage": "12", "frequency": 1830.00}]
     # restore monitortask for next test
     app.state.monitortask = save_app
 

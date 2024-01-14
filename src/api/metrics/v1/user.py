@@ -1,5 +1,5 @@
 from typing import List
-from fastapi import APIRouter, Request
+from fastapi import APIRouter
 from monitor import MonitorTask
 from domain.schemas import (
     ExceptionResponseSchema, 
@@ -10,6 +10,7 @@ from domain.services.userservice import UserService
 user_router = APIRouter()
 user_service = UserService()
 monitor_task = MonitorTask()
+
 
 @user_router.get(
     "/users",

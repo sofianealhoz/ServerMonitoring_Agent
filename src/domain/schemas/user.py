@@ -14,5 +14,5 @@ class GetUserResponseSchema(BaseModel):
     """
 
     nickname: str 
-    hostname : str
-    ip : str
+    hostname: str
+    ip: str
