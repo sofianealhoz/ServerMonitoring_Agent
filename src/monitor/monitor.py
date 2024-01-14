@@ -2,7 +2,7 @@
 import time
 import psutil
 import socket
-from .LogFunction import count_unique_users, error404
+from .LogFunction import count_unique_users, error404,get_last_5_error_logs
 
 
 class MonitorTask:
@@ -23,6 +23,7 @@ class MonitorTask:
     unique_users: int 
     nb_error404: int 
     log_directory: str
+    last_5_error_logs: list[str]  
     
     # Pour le réseau
     network_statut: psutil.net_io_counters()
@@ -67,7 +68,7 @@ class MonitorTask:
             self.hostname = self.hostname + [host]  
             self.ip = self.ip + [ip]
 
-        # self.log_directory = '/var/log/apache2/other_vhosts_access.log' Pour les serveurs
+        #self.log_directory = '/var/log/apache2/other_vhosts_access.log' 
         self.log_directory = "src/monitor/Documents"  # Pour l'instant
         self.network_statut = psutil.net_io_counters(pernic=True)
 
@@ -93,6 +94,7 @@ class MonitorTask:
             self.unique_users = self.unique_users + [count_unique_users(self.log_directory)]
             self.nb_error404 = self.nb_error404 + [error404(self.log_directory)]
             self.network_statut = psutil.net_io_counters(pernic=True)
+            self.last_5_error_logs = get_last_5_error_logs(self.log_directory)
             
             
 

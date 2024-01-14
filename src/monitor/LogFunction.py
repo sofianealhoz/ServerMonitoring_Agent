@@ -50,6 +50,32 @@ def error404(log_file_path):
         print(f"Une erreur s'est produite : {e}")
     finally:             
         return count404
-
-
         
+def get_last_5_error_logs(log_file_path):
+    try:
+        error_logs = []
+        f = open(log_file_path, "r")
+        lines = f.readlines()
+        lines.reverse()  # Reverse the order to get the most recent logs first
+
+        parser1 = make_parser('%h %l %u %t "%r" %>s %b')
+
+        for line in lines:
+            line_parser = parser1(line)
+
+            if line_parser['status'] == '404':
+                error_logs.append(line)
+
+            if len(error_logs) == 5:
+                break  # Stop after collecting the last 5 error logs
+
+    except Exception as e:
+        print(f"An error occurred: {e}")
+    finally:
+        return error_logs
+
+
+
+
+
+

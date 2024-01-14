@@ -2,6 +2,7 @@
 This module defines a data model for LOG information.
 """
 from pydantic import BaseModel
+from typing import List
 
 
 # LOG data model
@@ -16,3 +17,4 @@ class GetLogResponseSchema(BaseModel):
 
     unique_users: int 
     nb_error404: int
+    last_5_error_logs: List[str]
