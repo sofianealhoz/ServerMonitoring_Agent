@@ -2,7 +2,7 @@
 import time
 import psutil
 import socket
-from .LogFunction import count_unique_users, error404,get_last_5_error_logs
+from .LogFunction import count_unique_users, error404, get_last_5_error_logs
 
 
 class MonitorTask:
@@ -17,6 +17,7 @@ class MonitorTask:
     ram_available: list[float] 
     ram_total: float
     cpu_frequency: float 
+    # ram_frequency = ram_available
     ram_frequency: float
     
     # Pour les Log
@@ -56,6 +57,7 @@ class MonitorTask:
         self.hostname = []
         self.ip = []
         # self.cpu_frequency = psutil.cpu_freq().current 
+        # ram_available = ram frequency
         self.ram_frequency = psutil.virtual_memory().available
 
         # On récupère les informations sur l'utilisateur (nickname, hostname, ip)
@@ -69,7 +71,7 @@ class MonitorTask:
             self.ip = self.ip + [ip]
 
         self.log_directory = '/var/log/apache2/other_vhosts_access.log' 
-        #self.log_directory = "src/monitor/Documents"  # Pour l'instant
+        # self.log_directory = "src/monitor/Documents"  # Pour l'instant
         self.network_statut = psutil.net_io_counters(pernic=True)
 
         for proc in psutil.process_iter():

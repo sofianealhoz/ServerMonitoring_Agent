@@ -31,7 +31,7 @@ class LogService:
             unique_users = monitor_task.unique_users[i]
             nb_error404 = monitor_task.nb_error404[i]
             last_5_error_logs = monitor_task.last_5_error_logs 
-            logList.append(log(unique_users=unique_users, nb_error404=nb_error404,last_5_error_logs=last_5_error_logs))
+            logList.append(log(unique_users=unique_users, nb_error404=nb_error404, last_5_error_logs=last_5_error_logs))
         return logList
         
     def __str__(self):

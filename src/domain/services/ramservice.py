@@ -26,6 +26,7 @@ class RamService:
             List[ram]: A list of Ram objects containing RAM values.
         """
         total = monitor_task.ram_total
+        # frequency = ram_available
         frequency = monitor_task.ram_frequency
         ramlist = []
         for i in range(len(monitor_task.ram_percent)):
