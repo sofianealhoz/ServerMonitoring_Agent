@@ -2,8 +2,10 @@
 import time
 import psutil
 import socket
+import os
 from .LogFunction import count_unique_users, error404
-
+from collections import Counter
+from domain.models.viewedpages import ViewedPages
 
 class MonitorTask:
 
@@ -30,9 +32,13 @@ class MonitorTask:
     listOfFiveProcessNames = []
 
     # Pour les infos utilisateur
-    nickname : list[str]
-    hostname : list[str]
-    ip : list[str]
+    nickname: list[str]
+    hostname: list[str]
+    ip: list[str]
+
+    # Pour la page la plus vue
+    url : str
+    views : int
 
     def __init__(self) -> None:
         """
@@ -51,7 +57,11 @@ class MonitorTask:
         self.nb_error404 = []
         self.nickname = []
         self.hostname = []
-        self.ip =  []
+        self.ip = []
+        # self.cpu_frequency = psutil.cpu_freq().current 
+        self.ram_frequency = psutil.virtual_memory().available
+        self.url = ""
+        self.views = 0
 
         # On récupère les informations sur l'utilisateur (nickname, hostname, ip)
         for user_info in psutil.users():
@@ -89,6 +99,8 @@ class MonitorTask:
             self.nb_error404 = self.nb_error404 + [error404(self.log_directory)]
             self.network_statut = psutil.net_io_counters(pernic=True)
             
+            
+            # On récupère les informations sur la page la plus vue (url, views) :
             
 
             # On récupère les informations sur les processus (pid, name, rss, cpu_percent) :
