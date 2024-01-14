@@ -1,55 +1,43 @@
-"""
-Classe des fonctions utiles pour la récupérations des données des fichiers logs
-"""
-from apache_log_parser import make_parser  # pip install apache-log-parser
-"""
-log_co = '/var/log/apache2/other_vhosts_access.log' // sur nos serveurs
-local_dir = "Documents"  // Pour les tests
-"""
-
+from apache_log_parser import make_parser, LineDoesntMatchException
 
 def count_unique_users(log_file_path):
     unique_users = 0
-
+    ip_set = set()
     try:
-        ipList = []
-        f = open(log_file_path, "r")
-        lines = f.readlines()
-    
-        for line in lines:
-            parser1 = make_parser('%h %l %u %t "%r" %>s %b')
-            line_parser = parser1(line)
-                
-            if len(ipList) == 0:
-                ipList.append(line_parser['remote_logname'])
-            else:
-                if line_parser['remote_logname'] not in ipList:
-                    ipList.append(line_parser['remote_logname'])
-        unique_users = len(ipList)
-    except KeyboardInterrupt:
-        # Arrêt propre si l'utilisateur interrompt le script (Ctrl+C)
-        pass
-    finally:
-        return unique_users
+        with open(log_file_path, "r") as f:
+            parser = make_parser('%h %l %u %t "%r" %>s %b')
+            for line in f:
+                try:
+                    line_parser = parser(line)
+                    ip = line_parser['remote_host'] or line_parser['host']
+                    if ip:
+                        ip_set.add(ip)
+                except LineDoesntMatchException:
+                    continue
 
-
-def error404(log_file_path):
-    try:
-        count404 = 0
-        f = open(log_file_path, "r")
-        lines = f.readlines()
-        
-        for line in lines:
-            parser1 = make_parser('%h %l %u %t "%r" %>s %b')
-            line_parser = parser1(line)
-
-            if (line_parser['status'] == '404'):
-                count404 += 1
+        unique_users = len(ip_set)
 
     except Exception as e:
         print(f"Une erreur s'est produite : {e}")
-    finally:             
-        return count404
+    return unique_users
 
+def error404(log_file_path):
+    count404 = 0
+    try:
+        with open(log_file_path, "r") as f:
+            parser = make_parser('%h %l %u %t "%r" %>s %b')
+            for line in f:
+                try:
+                    line_parser = parser(line)
+                    if line_parser['status'] == '404':
+                        count404 += 1
+                except LineDoesntMatchException:
+                    continue
 
-        
+    except Exception as e:
+        print(f"Une erreur s'est produite : {e}")
+    return count404
+
+log_file_path = '/var/log/apache2/access.log'  # Remplacez cela par le chemin réel de votre fichier log
+print("Nombre d'utilisateurs uniques:", count_unique_users(log_file_path))
+print("Nombre d'erreurs 404:", error404(log_file_path))
