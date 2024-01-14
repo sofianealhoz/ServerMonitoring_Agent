@@ -7,6 +7,8 @@
 
 ## Run project
 
+Initiate the project by cloning the repository and then executing the following commands:
+
 ```sh
 make environment
 make help
@@ -14,6 +16,7 @@ make run
 #or
 make debug
 ```
+You can also download the service using Docker (installation part).
 
 ## Configuration
 
@@ -50,27 +53,25 @@ Employing a linter for code quality checks.
 Calculating and analyzing code coverage statistics.
 
 
-
-
-
-
 ## Installation
 To run this project all you need is to pull & run our Docker image :
 
 To run the docker image that contains our project, run the following commands :
 
+Connect using your Telecom Saint-Etienne linked account.
+
 ```bash
-docker login
+docker login devops.telecomste.fr:5050
 ```
 The username is: ...
 
 The password is: ...
 
 ```bash
-docker pull ...
+docker pull devops.telecomste.fr:5050/printerfaceadmin/2023-24/group1/interface/mon_app:main
 ```
 ```bash
-docker run -p ...
+docker run -d devops.telecomste.fr:5050/printerfaceadmin/2023-24/group1/interface/mon_app
 ```
 
 ## Built With
