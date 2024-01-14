@@ -68,8 +68,8 @@ class MonitorTask:
             self.hostname = self.hostname + [host]  
             self.ip = self.ip + [ip]
 
-        #self.log_directory = '/var/log/apache2/other_vhosts_access.log' 
-        self.log_directory = "src/monitor/Documents"  # Pour l'instant
+        self.log_directory = '/var/log/apache2/other_vhosts_access.log' 
+        #self.log_directory = "src/monitor/Documents"  # Pour l'instant
         self.network_statut = psutil.net_io_counters(pernic=True)
 
         for proc in psutil.process_iter():
