@@ -17,4 +17,4 @@ class Cpu(BaseModel):
 
     id: int
     usage: str
-    frequency:Optional[float] = 0.0
+    frequency: Optional[float] = 0.0
