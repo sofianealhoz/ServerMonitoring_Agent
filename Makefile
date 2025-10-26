@@ -18,6 +18,7 @@ environment: ## Configure venv & dev requirements
 		pip install apache_log_parser; \
 		pip install pytest; \
 		pip install psutil; \
+		pip install asyncpg; \
 	)
 
 clean: ## Remove virtual env

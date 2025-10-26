@@ -19,9 +19,11 @@ from api.metrics.v1.ram import ram_router
 from api.metrics.v1.network import network_router
 from api.metrics.v1.process import process_router
 from api.metrics.v1.user import user_router
+from api.metrics.v1.history import history_router
 from core.exceptions import CustomException
 from core.config import get_config
 from monitor import MonitorTask
+from infrastructure.database import init_pool, close_pool
 
 
 def init_routers(fastapi: FastAPI) -> None:
@@ -42,6 +44,7 @@ def init_routers(fastapi: FastAPI) -> None:
     fastapi.include_router(network_router)
     fastapi.include_router(process_router)
     fastapi.include_router(user_router)
+    fastapi.include_router(history_router)
 
 
 def init_listeners(fastapi: FastAPI) -> None:
@@ -61,10 +64,16 @@ def init_listeners(fastapi: FastAPI) -> None:
 
     # Start monitoring thread
     @fastapi.on_event("startup")
-    def on_start_up():
+    async def on_start_up():
+        await init_pool()
         thread = threading.Thread(target=fastapi.state.monitortask.monitor, daemon=True)
         
         thread.start()
+    
+    @fastapi.on_event("shutdown")
+    async def on_shutdown():
+        await close_pool()
+
 
 
 def make_middleware() -> List[Middleware]:

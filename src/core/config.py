@@ -18,12 +18,14 @@ class Config:
 
     version: str
     description: str
+    database_url: str
     title: str = "Agent"
     env: str = "production"
     debug: bool = False
     app_host: str = "0.0.0.0"
     app_port: int = 8000
-
+    database_pool_size: int = 5
+    database_max_overflow: int = 10
 
 @dataclass
 class LocalConfig(Config):
@@ -52,11 +54,12 @@ def get_config() -> Config:
     version = os.getenv("AGENT_VERSION", "1.0.0")
     description = os.getenv("AGENT_DESCRIPTION", "api for python agent")
     debug = bool(os.getenv("AGENT_DEBUG", "False"))
+    database_url = "postgresql://postgreuser:postgrepswd@localhost:5432/dbname_monitoring"
     match env:
         case "local":
             cfg = LocalConfig(version=version, description=description)
         case _:
             cfg = ProductionConfig(
-                version=version, description=description, debug=debug
+                version=version, description=description, debug=debug, database_url=database_url
             )
     return cfg

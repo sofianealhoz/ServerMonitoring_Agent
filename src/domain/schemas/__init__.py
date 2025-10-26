@@ -6,6 +6,7 @@ from .log import GetLogResponseSchema
 from .network import GetNetworkResponseSchema
 from .process import GetTopProcessSchema
 from .user import GetUserResponseSchema
+from .metrics import MetricSampleSchema
 
 
 class ExceptionResponseSchema(BaseModel):
@@ -22,4 +23,5 @@ __all__ = [
     "GetLogResponseSchema",
     "GetTopProcessSchema",
     "GetUserResponseSchema",
+    "MetricSampleSchema",
 ]
