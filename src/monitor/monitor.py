@@ -3,7 +3,15 @@ import time
 import psutil
 import socket
 from .LogFunction import count_unique_users, error404, get_last_5_error_logs
-
+from domain.schemas.metrics import MetricSampleSchema
+from domain.schemas.network import GetNetworkResponseSchema
+from domain.schemas.process import GetTopProcessSchema
+from domain.schemas.log import GetLogResponseSchema
+from domain.schemas.user import GetUserResponseSchema
+from domain.schemas.ram import GetRamResponseSchema
+from domain.schemas.hdd import GetHddUsageResponseSchema
+from domain.schemas.cpu import GetCpuResponseSchema
+from decimal import Decimal
 
 class MonitorTask:
 
@@ -38,7 +46,7 @@ class MonitorTask:
     hostname: list[str]
     ip: list[str]
 
-    def __init__(self) -> None:
+    def __init__(self, publish_metric=None, publish_process=None, publish_network=None, publish_log=None, publish_user=None):
         """
         Initialize the MonitorTask class.
 
@@ -59,6 +67,12 @@ class MonitorTask:
         # self.cpu_frequency = psutil.cpu_freq().current 
         # ram_available = ram frequency
         self.ram_frequency = psutil.virtual_memory().available
+        self.publish_metric = publish_metric or (lambda *_: None)
+        self.publish_process = publish_process or (lambda *_: None)
+        self.publish_network = publish_network or (lambda *_: None)
+        self.publish_log = publish_log or (lambda *_: None)
+        self.publish_user = publish_user or (lambda *_: None)
+
 
         # On récupère les informations sur l'utilisateur (nickname, hostname, ip)
         for user_info in psutil.users():
@@ -115,6 +129,64 @@ class MonitorTask:
             self.listOfProcessNames = sorted(self.listOfProcessNames, key=lambda procObj: procObj['cpu_percent'], reverse=True)
             self.listOfFiveProcessNames = self.listOfProcessNames[:5]
             
+                        # 1) Snapshot global (table metric_samples)
+            cpu_usage = sum(self.cpu_percent) / len(self.cpu_percent) if self.cpu_percent else 0.0
+            ram_usage = self.ram_percent[-1] if self.ram_percent else 0.0
+            disk_usage = self.harddrive_usage.percent if self.harddrive_usage else 0.0
+
+            metric_sample = MetricSampleSchema(
+                  # placeholder, la DB générera la vraie clé
+                cpu_usage=Decimal(str(cpu_usage)),
+                ram_usage=Decimal(str(ram_usage)),
+                disk_usage=Decimal(str(disk_usage)),
+            )
+            self.publish_metric(metric_sample)
+
+            # 2) Réseau : une entrée par interface
+            if self.publish_network and self.network_statut:
+                for name, stats in self.network_statut.items():
+                    network_sample = GetNetworkResponseSchema(
+                        name=name,
+                        bytes_sent=stats.bytes_sent / 2**20,   # ou en octets si tu préfères
+                        bytes_recv=stats.bytes_recv / 2**20,
+                        packets_sent=stats.packets_sent,
+                        packets_recv=stats.packets_recv,
+                        errin=stats.errin,
+                        errout=stats.errout,
+                        dropin=stats.dropin,
+                        dropout=stats.dropout,
+                    )
+                    self.publish_network(network_sample)
+
+            # 3) Processus (top 5 déjà stockés dans listOfFiveProcessNames)
+            if self.publish_process and self.listOfFiveProcessNames:
+                for proc in self.listOfFiveProcessNames:
+                    process_sample = GetTopProcessSchema(
+                        pid=int(proc["pid"]),
+                        name=proc["name"],
+                        rss=float(proc["rss"]),
+                        cpu_percent=float(proc["cpu_percent"]),
+                    )
+                    self.publish_process(process_sample)
+
+            # 4) Logs Apache
+            if self.publish_log:
+                log_sample = GetLogResponseSchema(
+                    unique_users=int(self.unique_users[-1]) if self.unique_users else 0,
+                    nb_error404=int(self.nb_error404[-1]) if self.nb_error404 else 0,
+                    last_5_error_logs=self.last_5_error_logs or [],
+                )
+                self.publish_log(log_sample)
+
+            if self.publish_user and self.nickname:
+                for nick, host, ip in zip(self.nickname, self.hostname, self.ip):
+                    user_sample = GetUserResponseSchema(
+                        nickname=nick,
+                        hostname=host,
+                        ip=ip,
+                    )
+                    self.publish_user(user_sample)
+
             time.sleep(self.interval)
             
     def __str__(self) -> str:

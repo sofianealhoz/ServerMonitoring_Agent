@@ -5,6 +5,7 @@ It initializes the FastAPI app, sets up routers, event listeners, and exception 
 creates a monitoring thread for fetching metrics.
 """
 import threading
+import asyncio
 from typing import List
 from fastapi import FastAPI, Request
 from fastapi.middleware import Middleware
@@ -23,8 +24,11 @@ from api.metrics.v1.history import history_router
 from core.exceptions import CustomException
 from core.config import get_config
 from monitor import MonitorTask
-from infrastructure.database import init_pool, close_pool
-
+#from infrastructure.database import init_pool, close_pool
+# from sqlalchemy import select
+# from infrastructure.db import get_session, metric_samples
+from infrastructure.db import async_engine
+from infrastructure.repositories.metrics import insert_metric_sample 
 
 def init_routers(fastapi: FastAPI) -> None:
     """
@@ -65,14 +69,31 @@ def init_listeners(fastapi: FastAPI) -> None:
     # Start monitoring thread
     @fastapi.on_event("startup")
     async def on_start_up():
-        await init_pool()
+        #await init_pool()
+        loop = asyncio.get_running_loop()
+        metric_queue = asyncio.Queue(maxsize=1000)
+        fastapi.state.metric_queue = metric_queue
+        fastapi.state.metric_writer = asyncio.create_task(worker(metric_queue, insert_metric_sample))
+    # Monitoring thread to fetch metrics
+    
+        monitortask = MonitorTask(
+            publish_metric=make_sink(loop, metric_queue),
+            # publish_network=make_sink(loop, network_queue),
+            # publish_process=make_sink(loop, process_queue),
+            # publish_logs=make_sink(loop, log_queue),
+            # publish_user=make_sink(loop, user_queue),
+        )    # API
+        fastapi.state.monitortask = monitortask
         thread = threading.Thread(target=fastapi.state.monitortask.monitor, daemon=True)
-        
+
+
         thread.start()
     
     @fastapi.on_event("shutdown")
     async def on_shutdown():
-        await close_pool()
+        await async_engine.dispose()
+
+        #await close_pool()
 
 
 
@@ -103,9 +124,6 @@ def create_app() -> FastAPI:
         FastAPI: The configured FastAPI application.
     """
     config = get_config()
-    # Monitoring thread to fetch metrics
-    monitortask = MonitorTask()
-    # API
     fastapi = FastAPI(
         title=config.title,
         description=config.description,
@@ -114,11 +132,26 @@ def create_app() -> FastAPI:
         redoc_url="/redoc",
         middleware=make_middleware(),
     )
-    fastapi.state.monitortask = monitortask
+    fastapi.state.monitortask = None
     fastapi.state.version = config.version
+    fastapi.state.metric_queue = None
+    fastapi.state.metric_writer = None
     init_routers(fastapi)
     init_listeners(fastapi)
     return fastapi
 
 
 app = create_app()
+
+async def worker(queue, inserter):
+    while True:
+        payload = await queue.get()
+        try:
+            await inserter(payload)
+        finally:
+            queue.task_done()
+
+def make_sink(loop, queue):
+    def submit(payload):
+        loop.call_soon_threadsafe(queue.put_nowait, payload)
+    return submit

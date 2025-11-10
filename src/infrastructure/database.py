@@ -17,14 +17,14 @@ async def close_pool() -> None:
     if _pool:
         await _pool.close()
 
-async def fetch_metric_samples(limit: int = 100) -> list[dict]:
-    await init_pool()
-    assert _pool is not None
-    async with _pool.acquire() as conn:
-        rows = await conn.fetch(
-            "SELECT id, cpu_usage, ram_usage, disk_usage FROM metric_samples ORDER BY id DESC LIMIT $1",
-            limit,
-        )
-    return [dict(row) for row in rows]
+# async def fetch_metric_samples(limit: int = 100) -> list[dict]:
+#     await init_pool()
+#     assert _pool is not None
+#     async with _pool.acquire() as conn:
+#         rows = await conn.fetch(
+#             "SELECT id, cpu_usage, ram_usage, disk_usage FROM metric_samples ORDER BY id DESC LIMIT $1",
+#             limit,
+#         )
+#     return [dict(row) for row in rows]
 
 

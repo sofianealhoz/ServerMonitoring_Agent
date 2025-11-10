@@ -11,6 +11,7 @@ from dataclasses import dataclass
 
 config = contextvars.ContextVar("configuration", default=None)
 
+database_async_url: str = "postgresql+asyncpg://postgreuser:postgrepswd@localhost:5432/dbname_monitoring"
 
 @dataclass
 class Config:
@@ -54,7 +55,7 @@ def get_config() -> Config:
     version = os.getenv("AGENT_VERSION", "1.0.0")
     description = os.getenv("AGENT_DESCRIPTION", "api for python agent")
     debug = bool(os.getenv("AGENT_DEBUG", "False"))
-    database_url = "postgresql://postgreuser:postgrepswd@localhost:5432/dbname_monitoring"
+    database_url = database_async_url
     match env:
         case "local":
             cfg = LocalConfig(version=version, description=description)
