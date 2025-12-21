@@ -19,6 +19,7 @@ environment: ## Configure venv & dev requirements
 		pip install pytest; \
 		pip install psutil; \
 		pip install asyncpg; \
+		pip install sqlalchemy; \
 	)
 
 clean: ## Remove virtual env

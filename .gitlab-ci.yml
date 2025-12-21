@@ -3,7 +3,7 @@ image: devops.telecomste.fr:5050/printerfaceadmin/2023-24/group1/agent/image_ci
 stages: # List of stages for jobs, and their order of execution
   - build
   - test
-#  - deploy
+  - deploy
 
 build-job:
   stage: build
@@ -28,12 +28,6 @@ build-job:
 unit-test-job:   # This job runs in the test stage.
   stage: test    # It only starts when the job in the build stage completes successfully.
   before_script:
-   - python --version ; pip --version  # For debugging
-   - pip install virtualenv
-   - virtualenv venv
-   - source venv/bin/activate
-   - python3 -m venv .venv
-   - source .venv/bin/activate
    - echo "> Installing requirements"
    - pip install -r requirements.dev.txt
    - pip install pytest flake8 psutil coverage apache-log-parser
@@ -45,12 +39,6 @@ unit-test-job:   # This job runs in the test stage.
 lint-test-job:   # This job also runs in the test stage.
   stage: test    # It can run at the same time as unit-test-job (in parallel).
   before_script:
-    - python --version ; pip --version  # For debugging
-    - pip install virtualenv
-    - virtualenv venv
-    - source venv/bin/activate
-    - python3 -m venv .venv
-    - source .venv/bin/activate
     - echo "> Installing requirements"
     - pip install -r requirements.dev.txt
     - pip install pytest flake8 psutil coverage apache-log-parser
@@ -63,12 +51,6 @@ code-coverage-job:
   stage: test
 
   before_script:
-    - python --version ; pip --version  # For debugging
-    - pip install virtualenv
-    - virtualenv venv
-    - source venv/bin/activate
-    - python3 -m venv .venv
-    - source .venv/bin/activate
     - echo "> Installing requirements"
     - pip install -r requirements.dev.txt
     - pip install pytest flake8 psutil coverage apache-log-parser
@@ -78,30 +60,51 @@ code-coverage-job:
     - coverage report --include=src/*
     - echo "Code Coverage finished."
 
-#deploy-job:
-#  stage: deploy
-#  image: docker:latest
-#  environment: production
-#  before_script:
-#    - mkdir -p ~/.ssh
-#    - chmod 700 ~/.ssh
-#    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa_CI
-#    - chmod 600 ~/.ssh/id_rsa_CI
-#  script:
-#    - echo "Tests success." #
-#    - echo "Deploying project..."
-#    - 'which ssh-agent || ( apk add openssh-client )' # Install SSH client if not present
-#    - eval $(ssh-agent -s) # Start the SSH agent
-#    - ssh-add <(echo "$SSH_PRIVATE_KEY")
-#    - ssh -i ~/.ssh/id_rsa_CI -o StrictHostKeyChecking=no -p 22103 grudu@karadoc.telecomste.net "echo 'SSH Connection Successful'"     #o
-##    - echo "$SSH_PRIVATE_KEY" | ssh-add - # Add the SSH key stored in $SSH_PRIVATE_KEY
-##    - ssh-keyscan -p 22103 -H karadoc.telecomste.net >> ~/.ssh/known_hosts # Add your server to known hosts
-#    - echo "$CI_COMMIT_REF_SLUG"
-#    - ssh grudu@karadoc.telecomste.net -p 22103 "echo $DOCKER_REGISTRY_TOKEN | docker login -u $CI_REGISTRY_USER --password-stdin devops.telecomste.fr:5050"
-#    - ssh grudu@karadoc.telecomste.net -p 22103  "docker pull devops.telecomste.fr:5050/printerfaceadmin/2023-24/group1/agent/mon_app:$CI_COMMIT_REF_SLUG" # Pull the Docker image on your server
-#    - ssh grudu@karadoc.telecomste.net -p 22103  "docker run -d -p 8080:8000 devops.telecomste.fr:5050/printerfaceadmin/2023-24/group1/agent/mon_app:$CI_COMMIT_REF_SLUG" # Run the Docker image on your server
-#    #- docker run -i -p 8080:8000 image_runner
-#    # Il faut se connecter au serveur, (possibilité de mettre des secrets sur Gitlab) puis lancer le docker run -i ... DANS LE SERVEUR.
-#    # "scp -P 22103 imageAgent.tar grudu@karadoc.telecomste.net:/home/grudu"
+dependency-check-job:
+  stage:  test
+  before_script:
+    - pip install safety
+  script:
+    - echo 'Checking dependencies for known vulnerabilities...'
+    - safety check -r requirements.txt
+    - echo "Dependencies are safe."
+
+complexity-check-job:
+  stage:  test
+  before_script:
+    - pip install xenon
+  script:
+    - echo "Checking code complexity..."
+    - xenon --max-absolute B --max-modules A --max-average A src/
+    - echo "Code complexity is acceptable."
+
+
+
+
+deploy-job:
+ stage: deploy
+ image: docker:latest
+ environment: production
+ before_script:
+   - mkdir -p ~/.ssh
+   - chmod 700 ~/.ssh
+   - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa_CI
+   - chmod 600 ~/.ssh/id_rsa_CI
+ script:
+   - echo "Tests success." #
+   - echo "Deploying project..."
+   - 'which ssh-agent || ( apk add openssh-client )' # Install SSH client if not present
+   - eval $(ssh-agent -s) # Start the SSH agent
+   - ssh-add <(echo "$SSH_PRIVATE_KEY")
+   - ssh -i ~/.ssh/id_rsa_CI -o StrictHostKeyChecking=no -p 22103 grudu@karadoc.telecomste.net "echo 'SSH Connection Successful'"     #o
+#    - echo "$SSH_PRIVATE_KEY" | ssh-add - # Add the SSH key stored in $SSH_PRIVATE_KEY
+#    - ssh-keyscan -p 22103 -H karadoc.telecomste.net >> ~/.ssh/known_hosts # Add your server to known hosts
+   - echo "$CI_COMMIT_REF_SLUG"
+   - ssh grudu@karadoc.telecomste.net -p 22103 "echo $DOCKER_REGISTRY_TOKEN | docker login -u $CI_REGISTRY_USER --password-stdin devops.telecomste.fr:5050"
+   - ssh grudu@karadoc.telecomste.net -p 22103  "docker pull devops.telecomste.fr:5050/printerfaceadmin/2023-24/group1/agent/mon_app:$CI_COMMIT_REF_SLUG" # Pull the Docker image on your server
+   - ssh grudu@karadoc.telecomste.net -p 22103  "docker run -d -p 8080:8000 devops.telecomste.fr:5050/printerfaceadmin/2023-24/group1/agent/mon_app:$CI_COMMIT_REF_SLUG" # Run the Docker image on your server
+   #- docker run -i -p 8080:8000 image_runner
+   # Il faut se connecter au serveur, (possibilité de mettre des secrets sur Gitlab) puis lancer le docker run -i ... DANS LE SERVEUR.
+   # "scp -P 22103 imageAgent.tar grudu@karadoc.telecomste.net:/home/grudu"
 
 
