@@ -1,81 +1,49 @@
-# agent-py
+# Server Monitoring Agent
 
-## Requirements
+Agent that exposes a machine's system metrics over an HTTP API: CPU, RAM,
+disk and network. It is meant to be queried by the monitoring interface
+(see Server Monitoring Interface).
 
-- Python 3.X
-- virtualenv [intall](https://virtualenv.pypa.io/en/latest/installation.html)
+## Stack
 
-## Run project
+- Python 3
+- FastAPI + Uvicorn (API)
+- PostgreSQL + SQLAlchemy (storage)
+- Docker, GitLab CI, pytest
+- Makefile for common tasks
 
-Initiate the project by cloning the repository and then executing the following commands:
+## Structure
 
-```sh
-make environment
-make help
-make run
-#or
-make debug
-```
-You can also download the service using Docker (installation part).
+- `src/api` : API routes.
+- `src/core` : application logic.
+- `src/domain` : domain models.
+- `src/infrastructure` : access to system resources.
+- `src/monitor` : metric collection.
+- `src/main.py`, `src/server.py` : entry points.
+- `src/tests` : tests.
 
 ## Configuration
 
-Environment variable:
+Environment variables:
 
-- AGENT_ENV: local/production
-- AGENT_VERSION: app version, default 1.0.0, endpoint /version
-- AGENT_DESCRIPTION: app description
-- AGENT_DEBUG: activate debug mode (boolean)
+- `AGENT_ENV` : `local` or `production`.
+- `AGENT_VERSION` : version exposed on `/version`.
+- `AGENT_DESCRIPTION` : application description.
+- `AGENT_DEBUG` : enable debug mode.
 
-local : enable reload mode (default)
-prod : no hot reload
+## Install and run
 
-## Usage
+With the Makefile:
 
-Run project with `make debug` and consult url in log for api doc at `/docs` or `/redoc`.
+    make environment
+    make run
 
-Application is running 2 threads, one for the API to expose metrics and one for collecting metrics.
- 
-## Description
+With Docker:
 
-A tool for monitoring servers was created with the following functionalities:
+    docker build -t monitoring-agent .
+    docker run -d -p 8000:8000 monitoring-agent
 
-Establishing connections to designated machines.
-Retrieving CPU, RAM, Hard Drive information, log, usage network from these remote machines.
-Implementing continuous delivery for the project through a Docker image.
+## Note
 
-
-This project was developed within a DevOps framework, ensuring adherence to the following practices:
-
-Writing tests and executing them with every push.
-Implementing continuous integration.
-Employing a linter for code quality checks.
-Calculating and analyzing code coverage statistics.
-
-
-## Installation
-To run this project all you need is to pull & run our Docker image :
-
-To run the docker image that contains our project, run the following commands :
-
-Connect using your Telecom Saint-Etienne linked account.
-
-```bash
-docker login devops.telecomste.fr:5050
-```
-The username is: ...
-
-The password is: ...
-
-```bash
-docker pull devops.telecomste.fr:5050/printerfaceadmin/2023-24/group1/interface/mon_app:main
-```
-```bash
-docker run -d devops.telecomste.fr:5050/printerfaceadmin/2023-24/group1/interface/mon_app
-```
-
-## Built With
-* Python
-* Docker
-* Dart
-
+Team project (Telecom Saint-Etienne). The agent collects the metrics; the
+companion web interface consumes its API.
