@@ -7,7 +7,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 import pytest
 from fastapi.testclient import TestClient
-from dependencies import get_monitor
+from dependencies import get_db_connection, get_monitor
 from server import app
 from monitor import MonitorTask
 from src.monitor.LogFunction import count_unique_users, error404
@@ -180,3 +180,33 @@ def test_log_functions(fake_monitor):
 
 
 
+
+
+@pytest.fixture
+def no_database():
+    """Replace the database connection so validation can be tested without PostgreSQL."""
+    app.dependency_overrides[get_db_connection] = lambda: None
+    yield
+    app.dependency_overrides.clear()
+
+
+def test_create_history_rejects_out_of_range_value(no_database):
+    # cpu_usage above 100: Pydantic rejects the body, the route never runs
+    response = client.post("/history", json={"cpu_usage": 150, "ram_usage": 40, "disk_usage": 20})
+    assert response.status_code == 422
+    assert response.json()["detail"][0]["loc"] == ["body", "cpu_usage"]
+
+
+def test_create_history_rejects_missing_and_unknown_fields(no_database):
+    response = client.post("/history", json={"cpu_usage": 10, "unknown": 1})
+    assert response.status_code == 422
+
+
+def test_history_limit_out_of_range(no_database):
+    response = client.get("/history?limit=0")
+    assert response.status_code == 422
+
+
+def test_history_sample_id_must_be_positive(no_database):
+    response = client.get("/history/0")
+    assert response.status_code == 422

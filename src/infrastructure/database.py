@@ -1,4 +1,5 @@
 import logging
+from decimal import Decimal
 
 import asyncpg
 from core.config import get_config
@@ -43,3 +44,30 @@ async def fetch_metric_samples(conn: asyncpg.Connection, limit: int = 100) -> li
         logger.error("Metric history query failed: %s", exc)
         raise ServiceUnavailableException("Metrics history is unavailable") from exc
     return [dict(row) for row in rows]
+
+async def fetch_metric_sample(conn: asyncpg.Connection, sample_id: int) -> dict | None:
+    """Read one metric sample by id; None when it does not exist."""
+    try:
+        row = await conn.fetchrow(
+            "SELECT id, cpu_usage, ram_usage, disk_usage FROM metric_samples WHERE id = $1",
+            sample_id,
+        )
+    except (OSError, asyncpg.PostgresError) as exc:
+        logger.error("Metric sample query failed: %s", exc)
+        raise ServiceUnavailableException("Metrics history is unavailable") from exc
+    return dict(row) if row else None
+
+async def insert_metric_sample(
+    conn: asyncpg.Connection, cpu_usage: Decimal, ram_usage: Decimal, disk_usage: Decimal
+) -> dict:
+    """Insert one metric sample and return the stored row, id included."""
+    try:
+        row = await conn.fetchrow(
+            "INSERT INTO metric_samples (cpu_usage, ram_usage, disk_usage) VALUES ($1, $2, $3)"
+            " RETURNING id, cpu_usage, ram_usage, disk_usage",
+            cpu_usage, ram_usage, disk_usage,
+        )
+    except (OSError, asyncpg.PostgresError) as exc:
+        logger.error("Metric sample insert failed: %s", exc)
+        raise ServiceUnavailableException("Metrics history is unavailable") from exc
+    return dict(row)
