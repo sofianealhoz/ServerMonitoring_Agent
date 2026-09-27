@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Query
+import asyncpg
+from fastapi import APIRouter, Depends, Query
+from dependencies import get_db_connection
 from domain.schemas import ExceptionResponseSchema
 from domain.schemas.metrics import MetricSampleSchema
 from infrastructure.database import fetch_metric_samples
@@ -10,6 +12,9 @@ history_router = APIRouter()
     response_model=list[MetricSampleSchema],
     responses={503: {"model": ExceptionResponseSchema}},
 )
-async def get_history(limit: int = Query(100, ge=1, le=1000)):
-    rows = await fetch_metric_samples(limit)
+async def get_history(
+    limit: int = Query(100, ge=1, le=1000),
+    conn: asyncpg.Connection = Depends(get_db_connection),
+):
+    rows = await fetch_metric_samples(conn, limit)
     return [MetricSampleSchema(**row) for row in rows]

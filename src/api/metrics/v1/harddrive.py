@@ -1,10 +1,11 @@
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Depends
+from dependencies import get_monitor
 from domain.schemas import (
     ExceptionResponseSchema,
     GetHddUsageResponseSchema,
 )
-
 from domain.services import HardDriveService
+from monitor import MonitorTask
 
 hdd_router = APIRouter()
 
@@ -15,14 +16,18 @@ hdd_router = APIRouter()
     # response_model_exclude={"id"},
     responses={503: {"model": ExceptionResponseSchema}},
 )
-async def get_hdd(request: Request) -> GetHddUsageResponseSchema:
+async def get_hdd(
+    monitor: MonitorTask = Depends(get_monitor),
+    service: HardDriveService = Depends(HardDriveService),
+) -> GetHddUsageResponseSchema:
     """
-    Route to get a list of CPU data.
+    Route to get the disk usage.
 
     Args:
-        request (Request): The incoming request.
+        monitor (MonitorTask): Injected monitoring task.
+        service (HardDriveService): Injected disk service.
 
     Returns:
-        List[GetCpuResponseSchema]: A list of CPU data as per the response model.
+        GetHddUsageResponseSchema: Disk usage as per the response model.
     """
-    return await HardDriveService().get_harddrive_usage(request.app.state.monitortask)
+    return await service.get_harddrive_usage(monitor)

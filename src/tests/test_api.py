@@ -5,7 +5,9 @@ import sys
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
+import pytest
 from fastapi.testclient import TestClient
+from dependencies import get_monitor
 from server import app
 from monitor import MonitorTask
 from src.monitor.LogFunction import count_unique_users, error404
@@ -40,28 +42,31 @@ thread = threading.Thread(target=app.state.monitortask.monitor, daemon=True)
 thread.start()
 
 
+@pytest.fixture
+def fake_monitor():
+    """
+    Inject a fake monitor instead of the real one, through FastAPI's dependency overrides.
+
+    Every route asking for Depends(get_monitor) receives this instance during the test.
+    """
+    monitor = MonitorTaskFake()
+    app.dependency_overrides[get_monitor] = lambda: monitor
+    yield monitor
+    app.dependency_overrides.clear()
+
+
 def test_health():
     response = client.get("/health")
     assert response.status_code == 200
 
 
-def test_get_cpu_usage():
-    # backup of the existing monitortask to restore it after the test
-    save_app = app.state.monitortask
-    # use fake monitor to have deterministic values
-    app.state.monitortask = MonitorTaskFake()
+def test_get_cpu_usage(fake_monitor):
     response = client.get("/metrics/v1/cpu/usage")
     assert response.status_code == 200
     assert response.json() == [{"id": 0, "usage": "10", "frequency": 1830.00}, {"id": 1, "usage": "12", "frequency": 1830.00}]
-    # restore monitortask for next test
-    app.state.monitortask = save_app
 
 
-def test_get_hdd():
-    # backup of the existing monitortask to restore it after the test
-    save_app = app.state.monitortask
-    # use fake monitor to have deterministic values
-    app.state.monitortask = MonitorTaskFake()
+def test_get_hdd(fake_monitor):
     
     response = client.get("/usageHdd")
     
@@ -76,13 +81,11 @@ def test_get_hdd():
     assert all(key in response.json() for key in expected_keys), f"Expected keys {expected_keys} in the response: {response.json()}"
     
     # Access the Hdd instance directly
-    hdd_instance = app.state.monitortask.harddrive_usage
+    hdd_instance = fake_monitor.harddrive_usage
     
     # Check the type of the created instance
     assert isinstance(hdd_instance, Hdd), f"Expected an instance of Hdd, but got {type(hdd_instance)}"
     
-    # restore monitortask for the next test
-    app.state.monitortask = save_app
 
 
 def test_get_cpu_core():
@@ -92,11 +95,7 @@ def test_get_cpu_core():
     assert isinstance(response.json()["number"], int)
 
 
-def test_get_ram_usage():
-    # backup of the existing monitortask to restore it after the test
-    save_app = app.state.monitortask
-    # use fake monitor to have deterministic values
-    app.state.monitortask = MonitorTaskFake()
+def test_get_ram_usage(fake_monitor):
     response = client.get("/usageRam")
 
     # Check status code
@@ -114,15 +113,9 @@ def test_get_ram_usage():
         for key, value in ram_info.items():
             assert isinstance(value, (int, float)), f"Expected '{key}' to be an int or float: {ram_info}"
     
-    # restore monitortask for the next test
-    app.state.monitortask = save_app
 
 
-def test_get_network_usage():
-    # backup of the existing monitortask to restore it after the test
-    save_app = app.state.monitortask
-    # use fake monitor to have deterministic values
-    app.state.monitortask = MonitorTaskFake()
+def test_get_network_usage(fake_monitor):
     
     response = client.get("/usageNetwork")
     
@@ -141,15 +134,9 @@ def test_get_network_usage():
         for key, value in network_info.items():
             assert isinstance(value, (str, int, float)), f"Expected '{key}' to be a string, int, or float: {network_info}"
     
-    # restore monitortask for the next test
-    app.state.monitortask = save_app
 
 
-def test_get_process_usage():
-    # backup of the existing monitortask to restore it after the test
-    save_app = app.state.monitortask
-    # use fake monitor to have deterministic values
-    app.state.monitortask = MonitorTaskFake()
+def test_get_process_usage(fake_monitor):
     
     response = client.get("/usageProcess")
     
@@ -170,11 +157,9 @@ def test_get_process_usage():
         assert isinstance(process_info["rss"], float), f"Expected 'rss' to be a float: {process_info}"
         assert isinstance(process_info["cpu_percent"], float), f"Expected 'cpu_percent' to be a float: {process_info}"
     
-    # restore monitortask for the next test
-    app.state.monitortask = save_app
 
 
-def test_log_functions():
+def test_log_functions(fake_monitor):
     log_file_path = "src/monitor/Documents"
     
     # Test count_unique_users
@@ -185,17 +170,11 @@ def test_log_functions():
     count_404 = error404(log_file_path)
     assert count_404 == 2, f"Expected 2 occurrences of 404 errors, but got {count_404}"
 
-    # backup of the existing monitortask to restore it after the test
-    save_app = app.state.monitortask
-    # use fake monitor to have deterministic values
-    app.state.monitortask = MonitorTaskFake()
     
     response = client.get("/logMessage")
     # Check status code
     assert response.status_code == 200
 
-    # restore monitortask for the next test
-    app.state.monitortask = save_app
 
     
 

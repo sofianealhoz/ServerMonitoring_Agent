@@ -1,8 +1,9 @@
 from typing import List
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Depends
+from dependencies import get_monitor
 from domain.schemas import GetNetworkResponseSchema
-
 from domain.services import NetworkService
+from monitor import MonitorTask
 
 network_router = APIRouter()
 
@@ -11,14 +12,18 @@ network_router = APIRouter()
     "/usageNetwork",
     response_model=List[GetNetworkResponseSchema],
 )
-async def get_network(request: Request) -> List[GetNetworkResponseSchema]:
+async def get_network(
+    monitor: MonitorTask = Depends(get_monitor),
+    service: NetworkService = Depends(NetworkService),
+) -> List[GetNetworkResponseSchema]:
     """
-    Route to get a list of CPU data.
+    Route to get the network counters of each interface.
 
     Args:
-        request (Request): The incoming request.
+        monitor (MonitorTask): Injected monitoring task.
+        service (NetworkService): Injected network service.
 
     Returns:
-        List[GetCpuResponseSchema]: A list of CPU data as per the response model.
+        List[GetNetworkResponseSchema]: One entry per network interface.
     """
-    return await NetworkService().get_network_statut(request.app.state.monitortask)
+    return await service.get_network_statut(monitor)

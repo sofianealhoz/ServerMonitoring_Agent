@@ -18,25 +18,26 @@ async def init_pool() -> None:
             max_size=cfg.database_pool_size + cfg.database_max_overflow,
         )
 
+def get_pool() -> asyncpg.Pool:
+    assert _pool is not None, "init_pool() must run first"
+    return _pool
+
 async def close_pool() -> None:
     if _pool:
         await _pool.close()
 
-async def fetch_metric_samples(limit: int = 100) -> list[dict]:
+async def fetch_metric_samples(conn: asyncpg.Connection, limit: int = 100) -> list[dict]:
     """
-    Read the most recent metric samples.
+    Read the most recent metric samples with the connection injected by the route.
 
     Raises:
-        ServiceUnavailableException: PostgreSQL is unreachable or the query failed.
+        ServiceUnavailableException: the query failed (missing table, lost connection...).
     """
     try:
-        await init_pool()
-        assert _pool is not None
-        async with _pool.acquire() as conn:
-            rows = await conn.fetch(
-                "SELECT id, cpu_usage, ram_usage, disk_usage FROM metric_samples ORDER BY id DESC LIMIT $1",
-                limit,
-            )
+        rows = await conn.fetch(
+            "SELECT id, cpu_usage, ram_usage, disk_usage FROM metric_samples ORDER BY id DESC LIMIT $1",
+            limit,
+        )
     except (OSError, asyncpg.PostgresError) as exc:
         # Translate the technical error into a domain error; keep the cause for the logs
         logger.error("Metric history query failed: %s", exc)
