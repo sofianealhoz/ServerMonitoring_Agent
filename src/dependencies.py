@@ -23,7 +23,7 @@ async def get_db_connection() -> AsyncIterator[asyncpg.Connection]:
     """
     Borrow a connection from the pool for the duration of the request.
 
-    The code after `yield` runs once the response is sent: the connection always goes back
+    The code after `yield` runs once the route has finished: the connection always goes back
     to the pool, even if the route raised an exception.
 
     Raises:
