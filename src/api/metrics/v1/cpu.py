@@ -17,7 +17,7 @@ cpu_router = APIRouter()
     "/usage",
     response_model=List[GetCpuResponseSchema],
     # response_model_exclude={"id"},
-    responses={"400": {"model": ExceptionResponseSchema}},
+    responses={503: {"model": ExceptionResponseSchema}},
 )
 async def get_cpu(request: Request) -> List[GetCpuResponseSchema]:
     """
@@ -37,7 +37,6 @@ async def get_cpu(request: Request) -> List[GetCpuResponseSchema]:
     "/core",
     response_model=GetCpuCoreResponseSchema,
     # response_model_exclude={"id"},
-    responses={"400": {"model": ExceptionResponseSchema}},
 )
 async def get_core_number(request: Request) -> GetCpuCoreResponseSchema:
     """

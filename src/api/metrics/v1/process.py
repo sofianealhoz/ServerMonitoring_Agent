@@ -1,9 +1,6 @@
 from typing import List
 from fastapi import APIRouter, Request
-from domain.schemas import (
-    ExceptionResponseSchema,
-    GetTopProcessSchema,
-)
+from domain.schemas import GetTopProcessSchema
 
 from domain.services import ProcessService
 
@@ -13,7 +10,6 @@ process_router = APIRouter()
 @process_router.get(
     "/usageProcess",
     response_model=List[GetTopProcessSchema],
-    responses={"400": {"model": ExceptionResponseSchema}},
 )
 async def get_ram(request: Request) -> List[GetTopProcessSchema]:
     """

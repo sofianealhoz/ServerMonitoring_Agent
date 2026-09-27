@@ -6,6 +6,7 @@ from .base import (
     UnprocessableEntity,
     DuplicateValueException,
     UnauthorizedException,
+    ServiceUnavailableException,
 )
 
 
@@ -17,4 +18,5 @@ __all__ = [
     "UnprocessableEntity",
     "DuplicateValueException",
     "UnauthorizedException",
+    "ServiceUnavailableException",
 ]

@@ -66,3 +66,14 @@ class DuplicateValueException(CustomException):
     code = HTTPStatus.UNPROCESSABLE_ENTITY
     error_code = HTTPStatus.UNPROCESSABLE_ENTITY
     message = HTTPStatus.UNPROCESSABLE_ENTITY.description
+
+
+class ServiceUnavailableException(CustomException):
+    """Custom exception class for HTTP 503 Service Unavailable.
+
+    Raised when a dependency (metrics collector, database) cannot serve the request yet.
+    """
+
+    code = HTTPStatus.SERVICE_UNAVAILABLE
+    error_code = HTTPStatus.SERVICE_UNAVAILABLE
+    message = HTTPStatus.SERVICE_UNAVAILABLE.description

@@ -2,6 +2,7 @@
 This module defines a controller class for fetching CPU values from a monitoring task.
 """
 from typing import List
+from core.exceptions import ServiceUnavailableException
 from domain.models import Cpu
 from monitor import MonitorTask
 
@@ -24,7 +25,12 @@ class CpuService:
 
         Returns:
             List[Cpu]: A list of Cpu objects containing CPU values.
+
+        Raises:
+            ServiceUnavailableException: The monitoring thread has not collected CPU data yet.
         """
+        if getattr(monitor_task, "cpu_percent", None) is None:
+            raise ServiceUnavailableException("CPU metrics not collected yet, retry in a few seconds")
         cpulist = []
         for core, usage in enumerate(monitor_task.cpu_percent):
             cpulist.append(Cpu(id=core, usage=str(usage), frequency=monitor_task.cpu_frequency))

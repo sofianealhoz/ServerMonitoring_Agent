@@ -1,4 +1,5 @@
 from typing import List
+from core.exceptions import ServiceUnavailableException
 from domain.models import Hdd
 from monitor import MonitorTask
 
@@ -16,6 +17,9 @@ class HardDriveService:
         """for i in range(len(monitor_task.harddrive_part)):
             hdd_list.append(Hdd(device=monitor_task.harddrive_part[i].device, mountpoint=monitor_task.harddrive_part[i].mountpoint, fstype=monitor_task.harddrive_part[i].fstype, opts=monitor_task.harddrive_part[i].opts, maxfile=monitor_task.harddrive_part[i].maxfile, maxpath=monitor_task.harddrive_part[i].maxpath))
         return hdd_list"""
+
+        if getattr(monitor_task, "harddrive_usage", None) is None:
+            raise ServiceUnavailableException("Disk metrics not collected yet, retry in a few seconds")
 
         # On récupère les valeurs, sous le tyep sdiskpart
         self.hdd_usage = monitor_task.harddrive_usage

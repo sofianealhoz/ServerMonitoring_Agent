@@ -13,7 +13,7 @@ hdd_router = APIRouter()
     "/usageHdd",
     response_model=GetHddUsageResponseSchema,
     # response_model_exclude={"id"},
-    responses={"400": {"model": ExceptionResponseSchema}},
+    responses={503: {"model": ExceptionResponseSchema}},
 )
 async def get_hdd(request: Request) -> GetHddUsageResponseSchema:
     """

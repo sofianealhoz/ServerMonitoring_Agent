@@ -1,10 +1,7 @@
 from typing import List
 from fastapi import APIRouter
 from monitor import MonitorTask
-from domain.schemas import (
-    ExceptionResponseSchema, 
-    GetUserResponseSchema,
-)
+from domain.schemas import GetUserResponseSchema
 from domain.services.userservice import UserService
 
 user_router = APIRouter()
@@ -15,7 +12,6 @@ monitor_task = MonitorTask()
 @user_router.get(
     "/users",
     response_model=List[GetUserResponseSchema],
-    responses={"400": {"model": ExceptionResponseSchema}}
 )
 async def get_user():
     """

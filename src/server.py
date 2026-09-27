@@ -4,7 +4,9 @@ This module contains a FastAPI application with various routes and middleware.
 It initializes the FastAPI app, sets up routers, event listeners, and exception handlers, and
 creates a monitoring thread for fetching metrics.
 """
+import logging
 import threading
+from http import HTTPStatus
 from typing import List
 from fastapi import FastAPI, Request
 from fastapi.middleware import Middleware
@@ -24,6 +26,9 @@ from core.exceptions import CustomException
 from core.config import get_config
 from monitor import MonitorTask
 from infrastructure.database import init_pool, close_pool
+from domain.schemas import ExceptionResponseSchema
+
+logger = logging.getLogger(__name__)
 
 
 def init_routers(fastapi: FastAPI) -> None:
@@ -54,12 +59,25 @@ def init_listeners(fastapi: FastAPI) -> None:
     Args:
         fastapi (FastAPI): The FastAPI application to set up event listeners and handlers for.
     """
-    # Exception handler
+    # Expected errors: raised on purpose by services and infrastructure
     @fastapi.exception_handler(CustomException)
-    async def custom_exception_handler(_request: Request, exc: CustomException):
+    async def custom_exception_handler(request: Request, exc: CustomException):
+        logger.warning("%s %s -> %s: %s", request.method, request.url.path, exc.code, exc.message)
         return JSONResponse(
             status_code=exc.code,
             content={"error_code": exc.error_code, "message": exc.message},
+        )
+
+    # Unexpected errors: log the full traceback, never leak it to the client
+    @fastapi.exception_handler(Exception)
+    async def unhandled_exception_handler(request: Request, _exc: Exception):
+        logger.exception("Unhandled error on %s %s", request.method, request.url.path)
+        return JSONResponse(
+            status_code=HTTPStatus.INTERNAL_SERVER_ERROR,
+            content={
+                "error_code": HTTPStatus.INTERNAL_SERVER_ERROR,
+                "message": HTTPStatus.INTERNAL_SERVER_ERROR.description,
+            },
         )
 
     # Start monitoring thread
@@ -113,6 +131,8 @@ def create_app() -> FastAPI:
         docs_url="/docs",
         redoc_url="/redoc",
         middleware=make_middleware(),
+        # Every route can fail with a 500 in the same JSON shape
+        responses={500: {"model": ExceptionResponseSchema}},
     )
     fastapi.state.monitortask = monitortask
     fastapi.state.version = config.version

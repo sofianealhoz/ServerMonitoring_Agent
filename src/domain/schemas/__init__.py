@@ -10,7 +10,10 @@ from .metrics import MetricSampleSchema
 
 
 class ExceptionResponseSchema(BaseModel):
-    error: str
+    """Body of every error response, as built by the exception handlers in server.py."""
+
+    error_code: int
+    message: str
 
 
 __all__ = [

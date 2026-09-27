@@ -3,10 +3,7 @@ This module defines API routes for handling CPU-related data.
 """
 from typing import List
 from fastapi import APIRouter, Request
-from domain.schemas import (
-    ExceptionResponseSchema,
-    GetRamResponseSchema,
-)
+from domain.schemas import GetRamResponseSchema
 from domain.services import RamService
 
 ram_router = APIRouter()
@@ -15,7 +12,6 @@ ram_router = APIRouter()
 @ram_router.get(
     "/usageRam",
     response_model=List[GetRamResponseSchema],
-    responses={"400": {"model": ExceptionResponseSchema}},
 )
 async def get_ram(request: Request) -> List[GetRamResponseSchema]:
     """

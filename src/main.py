@@ -1,4 +1,5 @@
 """Module providing main entrypoint."""
+import logging
 import os
 import click
 import uvicorn
@@ -32,6 +33,10 @@ def main(env: str, debug: bool):
     os.environ["AGENT_DEBUG"] = str(debug)
 
     config = get_config()
+    logging.basicConfig(
+        level=logging.DEBUG if debug else logging.INFO,
+        format="%(asctime)s %(levelname)s %(name)s: %(message)s",
+    )
     # Start Webserver
     uvicorn.run(
         app="server:app",

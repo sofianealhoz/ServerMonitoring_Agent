@@ -1,9 +1,6 @@
 from typing import List
 from fastapi import APIRouter, Request
-from domain.schemas import (
-    ExceptionResponseSchema,
-    GetNetworkResponseSchema,
-)
+from domain.schemas import GetNetworkResponseSchema
 
 from domain.services import NetworkService
 
@@ -13,7 +10,6 @@ network_router = APIRouter()
 @network_router.get(
     "/usageNetwork",
     response_model=List[GetNetworkResponseSchema],
-    responses={"400": {"model": ExceptionResponseSchema}},
 )
 async def get_network(request: Request) -> List[GetNetworkResponseSchema]:
     """
