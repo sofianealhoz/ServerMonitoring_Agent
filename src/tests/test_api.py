@@ -5,9 +5,15 @@ import sys
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
+# Test-only values: the real ones come from the environment, never from the code
+os.environ.setdefault("AGENT_DATABASE_URL", "postgresql://test:test@localhost:5432/test")
+os.environ.setdefault("AGENT_JWT_SECRET", "test-secret-not-used-in-production")
+
 import pytest
 from fastapi.testclient import TestClient
-from dependencies import get_db_connection, get_monitor
+from core.security import create_access_token
+from dependencies import get_current_user, get_db_connection, get_monitor
+from domain.schemas.auth import CurrentUserSchema
 from server import app
 from monitor import MonitorTask
 from src.monitor.LogFunction import count_unique_users, error404
@@ -42,6 +48,21 @@ thread = threading.Thread(target=app.state.monitortask.monitor, daemon=True)
 thread.start()
 
 
+@pytest.fixture(autouse=True)
+def authenticated_admin(request):
+    """
+    By default every test runs as an authenticated admin, without database or real token.
+
+    Tests about authentication itself opt out with @pytest.mark.real_auth.
+    """
+    if "real_auth" in request.keywords:
+        yield
+        return
+    app.dependency_overrides[get_current_user] = lambda: CurrentUserSchema(username="admin", role="admin")
+    yield
+    app.dependency_overrides.pop(get_current_user, None)
+
+
 @pytest.fixture
 def fake_monitor():
     """
@@ -52,7 +73,7 @@ def fake_monitor():
     monitor = MonitorTaskFake()
     app.dependency_overrides[get_monitor] = lambda: monitor
     yield monitor
-    app.dependency_overrides.clear()
+    app.dependency_overrides.pop(get_monitor, None)
 
 
 def test_health():
@@ -187,7 +208,7 @@ def no_database():
     """Replace the database connection so validation can be tested without PostgreSQL."""
     app.dependency_overrides[get_db_connection] = lambda: None
     yield
-    app.dependency_overrides.clear()
+    app.dependency_overrides.pop(get_db_connection, None)
 
 
 def test_create_history_rejects_out_of_range_value(no_database):
@@ -210,3 +231,47 @@ def test_history_limit_out_of_range(no_database):
 def test_history_sample_id_must_be_positive(no_database):
     response = client.get("/history/0")
     assert response.status_code == 422
+
+
+# ---------- Authentication and authorization ----------
+
+@pytest.mark.real_auth
+def test_no_token_gives_401(no_database):
+    response = client.get("/usage")
+    assert response.status_code == 401
+    assert response.headers["WWW-Authenticate"] == "Bearer"
+
+
+@pytest.mark.real_auth
+def test_forged_token_gives_401(no_database):
+    response = client.get("/usage", headers={"Authorization": "Bearer not-a-real-token"})
+    assert response.status_code == 401
+
+
+@pytest.mark.real_auth
+def test_token_signed_with_another_secret_gives_401(no_database):
+    import jwt
+    forged = jwt.encode({"sub": "admin"}, "another-secret", algorithm="HS256")
+    response = client.get("/usage", headers={"Authorization": f"Bearer {forged}"})
+    assert response.status_code == 401
+
+
+@pytest.mark.real_auth
+def test_reader_cannot_write_403(no_database):
+    # Authenticated (we know who it is) but not allowed: 403, not 401
+    app.dependency_overrides[get_current_user] = lambda: CurrentUserSchema(username="bob", role="reader")
+    try:
+        response = client.post("/history", json={"cpu_usage": 10, "ram_usage": 20, "disk_usage": 30})
+        assert response.status_code == 403
+    finally:
+        app.dependency_overrides.pop(get_current_user, None)
+
+
+def test_public_routes_need_no_token():
+    assert client.get("/health").status_code == 200
+    assert client.get("/version").status_code == 200
+
+
+def test_access_token_is_readable_by_the_server():
+    from core.security import decode_access_token
+    assert decode_access_token(create_access_token("alice")) == "alice"

@@ -1,7 +1,8 @@
 import asyncpg
 from fastapi import APIRouter, Depends, Path, Query, Response, status
 from core.exceptions import NotFoundException
-from dependencies import get_db_connection
+from dependencies import get_db_connection, require_admin
+from domain.schemas.auth import CurrentUserSchema
 from domain.schemas import ExceptionResponseSchema
 from domain.schemas.metrics import MetricSampleCreateSchema, MetricSampleSchema
 from infrastructure.database import fetch_metric_sample, fetch_metric_samples, insert_metric_sample
@@ -43,13 +44,15 @@ async def get_history_sample(
     "/history",
     response_model=MetricSampleSchema,
     status_code=status.HTTP_201_CREATED,
-    responses={503: {"model": ExceptionResponseSchema}},
+    responses={403: {"model": ExceptionResponseSchema}, 503: {"model": ExceptionResponseSchema}},
 )
 async def create_history_sample(
     # Request body: JSON parsed and validated against the schema, 422 if it does not match
     sample: MetricSampleCreateSchema,
     response: Response,
     conn: asyncpg.Connection = Depends(get_db_connection),
+    # Writing is reserved to admins: a reader gets 403
+    _admin: CurrentUserSchema = Depends(require_admin),
 ):
     row = await insert_metric_sample(conn, sample.cpu_usage, sample.ram_usage, sample.disk_usage)
     # REST convention for a creation: 201 + the URL of the new resource

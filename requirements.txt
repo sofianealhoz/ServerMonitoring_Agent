@@ -1,3 +1,7 @@
 fastapi
 uvicorn
 click
+asyncpg
+pyjwt
+bcrypt
+python-multipart

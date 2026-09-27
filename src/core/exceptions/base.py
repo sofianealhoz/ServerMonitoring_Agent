@@ -8,6 +8,8 @@ class CustomException(Exception):
     code = HTTPStatus.BAD_GATEWAY
     error_code = HTTPStatus.BAD_GATEWAY
     message = HTTPStatus.BAD_GATEWAY.description
+    # Extra HTTP headers sent with the error response
+    headers: dict | None = None
 
     def __init__(self, message=None):
         """
@@ -37,7 +39,7 @@ class NotFoundException(CustomException):
 
 
 class ForbiddenException(CustomException):
-    """Custom exception class for HTTP 403 Forbidden."""
+    """HTTP 403: we know who you are, but you are not allowed to do this."""
 
     code = HTTPStatus.FORBIDDEN
     error_code = HTTPStatus.FORBIDDEN
@@ -45,11 +47,13 @@ class ForbiddenException(CustomException):
 
 
 class UnauthorizedException(CustomException):
-    """Custom exception class for HTTP 401 Unauthorized."""
+    """HTTP 401: we do not know who you are (missing, invalid or expired token)."""
 
     code = HTTPStatus.UNAUTHORIZED
     error_code = HTTPStatus.UNAUTHORIZED
     message = HTTPStatus.UNAUTHORIZED.description
+    # Required by the HTTP spec on a 401: tells the client which authentication scheme to use
+    headers = {"WWW-Authenticate": "Bearer"}
 
 
 class UnprocessableEntity(CustomException):

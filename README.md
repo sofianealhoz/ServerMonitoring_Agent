@@ -30,6 +30,27 @@ Environment variables:
 - `AGENT_VERSION` : version exposed on `/version`.
 - `AGENT_DESCRIPTION` : application description.
 - `AGENT_DEBUG` : enable debug mode.
+- `AGENT_DATABASE_URL` : PostgreSQL connection string (required).
+- `AGENT_JWT_SECRET` : key used to sign access tokens (required).
+
+Secrets are read from the environment only. Copy `.env.example` to `.env` (ignored by git).
+
+## Database
+
+    psql "$AGENT_DATABASE_URL" -f sql/schema.sql
+    python3 src/create_user.py alice admin      # prompts for the password
+
+## Authentication
+
+Every metrics route requires a JWT; `/`, `/health`, `/version` and `/token` are public.
+
+    # 1. get a token (OAuth2 password flow, form-encoded)
+    curl -X POST http://localhost:8000/token -d "username=alice&password=..."
+    # 2. send it on each call
+    curl http://localhost:8000/usage -H "Authorization: Bearer <access_token>"
+
+- `401 Unauthorized` : missing, invalid or expired token.
+- `403 Forbidden` : valid token, but the role is not allowed (writing to `/history` needs `admin`).
 
 ## Install and run
 
@@ -41,7 +62,7 @@ With the Makefile:
 With Docker:
 
     docker build -t monitoring-agent .
-    docker run -d -p 8000:8000 monitoring-agent
+    docker run -d -p 8000:8000 --env-file .env monitoring-agent
 
 ## Note
 

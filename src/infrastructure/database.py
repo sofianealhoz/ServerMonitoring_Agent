@@ -57,6 +57,18 @@ async def fetch_metric_sample(conn: asyncpg.Connection, sample_id: int) -> dict 
         raise ServiceUnavailableException("Metrics history is unavailable") from exc
     return dict(row) if row else None
 
+async def fetch_user(conn: asyncpg.Connection, username: str) -> dict | None:
+    """Read one API account by username; None when it does not exist."""
+    try:
+        row = await conn.fetchrow(
+            "SELECT username, hashed_password, role, disabled FROM users WHERE username = $1",
+            username,
+        )
+    except (OSError, asyncpg.PostgresError) as exc:
+        logger.error("User query failed: %s", exc)
+        raise ServiceUnavailableException("Authentication is unavailable") from exc
+    return dict(row) if row else None
+
 async def insert_metric_sample(
     conn: asyncpg.Connection, cpu_usage: Decimal, ram_usage: Decimal, disk_usage: Decimal
 ) -> dict:

@@ -8,12 +8,14 @@ import logging
 import threading
 from http import HTTPStatus
 from typing import List
-from fastapi import FastAPI, Request
+from fastapi import Depends, FastAPI, Request
 from fastapi.middleware import Middleware
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from api import router
+from api.auth import auth_router
 from api.default.default import default_router
+from dependencies import get_current_user
 from api.metrics.v1.cpu import cpu_router
 from api.metrics.v1.harddrive import hdd_router
 from api.metrics.v1.log import log_router
@@ -38,18 +40,17 @@ def init_routers(fastapi: FastAPI) -> None:
     Args:
         fastapi (FastAPI): The FastAPI application to add routers to.
     """
-    # Add default route (version, healthcheck)
+    # Public routes: version, healthcheck, login
     fastapi.include_router(default_router)
-    # Add domain routes
-    fastapi.include_router(router)
-    fastapi.include_router(cpu_router)
-    fastapi.include_router(hdd_router)
-    fastapi.include_router(ram_router)
-    fastapi.include_router(log_router)
-    fastapi.include_router(network_router)
-    fastapi.include_router(process_router)
-    fastapi.include_router(user_router)
-    fastapi.include_router(history_router)
+    fastapi.include_router(auth_router)
+    # Domain routes: a valid token is required for every one of them (401 otherwise)
+    protected = [Depends(get_current_user)]
+    unauthorized = {401: {"model": ExceptionResponseSchema}}
+    for domain_router in (
+        router, cpu_router, hdd_router, ram_router, log_router,
+        network_router, process_router, user_router, history_router,
+    ):
+        fastapi.include_router(domain_router, dependencies=protected, responses=unauthorized)
 
 
 def init_listeners(fastapi: FastAPI) -> None:
@@ -66,6 +67,7 @@ def init_listeners(fastapi: FastAPI) -> None:
         return JSONResponse(
             status_code=exc.code,
             content={"error_code": exc.error_code, "message": exc.message},
+            headers=exc.headers,
         )
 
     # Unexpected errors: log the full traceback, never leak it to the client
